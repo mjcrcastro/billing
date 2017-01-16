@@ -34,3 +34,4 @@ Route::resource('descriptorTypes','DescriptorTypesController');
 Route::resource('productTypes','ProductTypesController');
 Route::resource('invTransactionHeaders','InvTransactionHeadersController');
 Route::get('jdescriptors', array('uses' => 'JsonController@descriptors'));
+Route::get('jproducts', array('uses' => 'JsonController@products'));

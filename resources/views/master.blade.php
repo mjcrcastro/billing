@@ -8,7 +8,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Inventory</title>
 
@@ -37,6 +36,9 @@
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
+        <link media="all" type="text/css" rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+        <link media="all" type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
 
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -51,16 +53,14 @@
         <script src="/dist/js/sb-admin-2.js"></script>
 
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+        <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/select/1.2.1/js/dataTables.select.min.js"></script>
+        <script src="//cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
         <!--  custom scripts -->
 
         @yield('header') <!-- Header is here to include required functions from the included blade page-->
-        <script> $.ajaxSetup({
-             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-        });
-        </script>
+
     </head>
 
     <body>
@@ -418,11 +418,11 @@
                         Errors found please check
                     </div>
                     @endif
-                    
+
                     @if(Session::has('message'))
-                        <div class="alert alert-success">
-                            {{Session::get('message')}}
-                        </div>
+                    <div class="alert alert-success">
+                        {{Session::get('message')}}
+                    </div>
                     @endif
 
                     @yield('main')
@@ -437,7 +437,6 @@
 
         </div>
         <!-- /#wrapper -->
-
 
 
     </body>

@@ -13,7 +13,7 @@ active
      * the purchase_date text input control
      */
     $(function () {
-        $("#purchase_date").datepicker({
+        $("#document_date").datepicker({
             changeMonth: true,
             changeYear: true,
             dateFormat: "yy-mm-dd"
@@ -33,56 +33,54 @@ active
      * a datatables jQuery plugin on table id="example"
      */
     $(document).ready(function () {
-        var table = $('#example').dataTable({
+        var table = $('#example').DataTable({
             "processing": true,
             "serverSide": true,
+             select: true,
             "iDisplayLength": 5,
             "aLengthMenu": [
                 [5, 10, 25, 50, -1],
                 [5, 10, 25, 50, "All"]],
-            dom: 'T<"clear">lfrtip',
-            tableTools: {
-                "sRowSelect": "multi",
-                "aButtons": [
-                    {"sExtends": "text", "sButtonText": "add new product",
-                        "fnClick": function (nButton, oConfig, oFlash) {
-                            window.open('{{ route("products.create") }}');
-                            return false;
-                        }
-                    },
-                    {"sExtends": "text", "sButtonText": "add to purchase",
-                        "fnClick": function (nButton, oConfig, oFlash) {
-                            var oTT = TableTools.fnGetInstance('example');
-                            var aData = oTT.fnGetSelectedData()
-                            var values = $("input[id='productarray']")//gets the value of all elements whose id is productarray
-                                    .map(function () {
-                                        return parseInt($(this).val());
-                                    }).get();
-                            for (nCount = 0; nCount < aData.length; nCount++) {
-                                //check if there exists a product with same id in purchase list
-                                //$.inArray only compares between numbers or characters
-                                //so I converted the values to Int within the array before comparison.
-                                if (!values.length || $.inArray(aData[nCount]['product_id'], values) === -1) {
-                                    $('<div class="container container-fluid">' +
-                                            '<div class="row" id="productRow">' +
-                                            '<input type="hidden" id="productarray" name="product_id[]" value=' + aData[nCount]['product_id'] + '>' +
-                                            '<div class="col-xs-4"> {{ "' + aData[nCount]['product_description'] + '" }} </div> ' +
-                                            '<div class="col-xs-3"> {{ Form::number("amount[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
-                                            '<div class="col-xs-3"> {{ Form::number("total[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
-                                            '<div class="col-xs-2"> <a href="#" id="removedescriptor">' +
-                                            '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' +
-                                            '</a></div> ' +
-                                            '</div></div>').appendTo('#products');
-                                    $('#myModal').modal('hide');
-                                }
+            dom: 'T<"clear">lfrtBip',
+            buttons: [
+                {
+                    text: 'add new product',
+                    action: function (e, dt, node, conf) {
+                        window.open('{{ route("products.create") }}');
+                        return false;
+                    }
+                },
+                {
+                    text: 'add to purchase',
+                    action: function (e, dt, node, conf) {
+                        var aData = table.rows({ selected: true }).data().toArray();
+                        var values = $("input[id='productarray']")//gets the value of all elements whose id is productarray
+                                .map(function () {
+                                    return parseInt($(this).val());
+                                }).get();
+                        for (nCount = 0; nCount < aData.length; nCount++) {
+                            //check if there exists a product with same id in purchase list
+                            //$.inArray only compares between numbers or characters
+                            //so I converted the values to Int within the array before comparison.
+                            if (!values.length || $.inArray(aData[nCount]['product_id'], values) === -1) {
+                                $('<id="productRow">' +
+                                        '<input type="hidden" id="productarray" name="product_id[]" value=' + aData[nCount]['product_id'] + '>' +
+                                        '<div class="col-xs-4">  ' + aData[nCount]['product_description'] + ' </div> ' +
+                                        '<div class="col-xs-3"> {{ Form::number("amount[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
+                                        '<div class="col-xs-3"> {{ Form::number("total[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
+                                        '<div class="col-xs-2"> <a href="#" id="removedescriptor">' +
+                                        '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' +
+                                        '</a></div> ' +
+                                        '</div>').appendTo('#products');
+                                $('#myModal').modal('hide');
                             }
                         }
                     }
-                ]
-            },
+                }
+            ],
             "ajax": {
                 "url": "{{ url('jproducts') }}",
-                "type": "GET"
+                "type": "GET",
             },
             "columnDefs": [
                 {
@@ -120,6 +118,7 @@ active
 
 <div class="container-fluid">
     {{ Form::open(array('route'=>'invTransactionHeaders.store','class'=>'form-horizontal','role'=>'form')) }}
+
     <div class="form-group row">
         <div class=" col-xs-2">
             {{ Form::label('transactionType_id', 'Transaction Type',array("class"=>"control-label pull-right")) }}
@@ -130,10 +129,10 @@ active
     </div>
     <div class="form-group row">
         <div class=" col-xs-2">
-        {{ Form::label('date', 'Date', array("class"=>"control-label pull-right")) }}
+            {{ Form::label('date', 'Date', array("class"=>"control-label pull-right")) }}
         </div>
         <div class=" col-xs-10">
-        {{ Form::text('purchase_date', date('Y-m-d'), array('class'=>'form-control',"id"=>"purchase_date")) }}
+            {{ Form::text('document_date', date('Y-m-d'), array('class'=>'form-control',"id"=>"document_date")) }}
         </div>
     </div>
 
@@ -156,12 +155,11 @@ active
 
     <p></p>
     {{ Html::link('#', 'Add Items',array('class'=>'col-xs-4 btn btn-success','id'=>'addProducts')) }}
-    {{ Form::submit('Submit', array('class'=>'col-xs-4 btn  btn-primary')) }}
+    {{ Form::submit('Submit', array('class'=>'col-xs-4 btn btn-primary')) }}
     {{ link_to_route('invTransactionHeaders.index', 'Cancel', [],array('class'=>'col-xs-4 btn btn-default')) }}
     {{ Form::close() }}
 
 </div>
-
 
 {{-- bootstrap modal --}}
 

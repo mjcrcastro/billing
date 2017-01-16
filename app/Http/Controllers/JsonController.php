@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Helpers;
 use App\Descriptor;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\DB;
+use Config;
+use App\Product;
 
 class JsonController extends Controller {
     /*
@@ -41,17 +45,17 @@ class JsonController extends Controller {
         }
     }
 
-    public function products() {
+    public function products(Request $request) {
 
         $action_code = 'products_list_json';
 
-        $message = Helper::usercan($action_code, Auth::user());
+        $message = usercan($action_code, Auth::user());
 
         if ($message) {
-            return Redirect::back()->with('message', $message);
+            return redirect()->back()->with('message', $message);
         }
 
-        if (Request::ajax()) {//return json data only to ajax queries
+        if ($request->ajax()) {//return json data only to ajax queries
             $filter = Input::get('search.value');
 
             $dbRaw = $this->getDbRaw();
@@ -69,7 +73,7 @@ class JsonController extends Controller {
                     ->take(Input::get('length'))
                     ->get();
 
-            return Response::json($response);
+            return response()->json($response);
         }
     }
 

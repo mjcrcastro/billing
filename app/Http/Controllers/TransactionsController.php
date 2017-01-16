@@ -54,7 +54,43 @@ class TransactionsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $action_code = 'transaction_store';
+        $message = usercan($action_code, Auth::user());
+        if ($message) {
+            return redirect()->back()->with('message', $message);
+        }//a return won't let the following code to continue
+        //Receives and updates new transaction data
+        $transactionData = array(
+            "transaction_type_id" => Input::get('transactionType_id'),
+            "document_date" => Input::get('document_date'),
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        );
+        $transactedProducts = Input::get('product_id');
+        if (!$transactedProducts) {
+            return Redirect::route('invTransactionHeaders.create')
+                            ->withInput()
+                            ->with('message', 'No product was found');
+        }
+        $this->validate($transactionData, TransactionHeader::$rules);
+        
+            $transactionHeader = TransactionHeader::create($transactionData);
+            $transactedAmount = Input::get('amount');
+            $transactedTotal = Input::get('total');
+            
+            for ($nCount = 0; $nCount < count($transactedProducts); $nCount++) {
+                $transactedProducts[] = array('transaction_header_id' => $transactionHeader->id,
+                    'product_id' => $transactedProducts[$nCount],
+                    'amount' => $transactedAmount[$nCount],
+                    'total' => $transactedTotal[$nCount],
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s")
+                );
+            }
+            $this->validate($transactedProducts, TransactionDetails::$rules);
+            TransactionDetails::insert($transactedProducts);
+            return redirect()->route('transactionHeaders.index')
+                            ->with('message', 'Purchase Created');
     }
 
     /**
