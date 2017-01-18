@@ -16,6 +16,10 @@ class CreateInvTransactionHeadersTable extends Migration
         //
         Schema::create('inv_transaction_headers', function(Blueprint $table) {
             $table->increments('id');
+            $table->integer('storage_id')
+                    ->index()
+                    ->references('id')
+                    ->on('storages');
             $table->integer('transaction_type_id')
                     ->index()
                     ->references('id')

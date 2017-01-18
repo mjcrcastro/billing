@@ -19,7 +19,10 @@ class DescriptorTypesTableSeeder extends Seeder
            array('id'=>3,'description'=>"Empaque",'created_at'=>"2015-03-23",
                'updated_at'=>"2015-03-23",),
            array('id'=>4,'description'=>"Peso",'created_at'=>"2015-03-23",
+               'updated_at'=>"2015-03-23",),
+           array('id'=>5,'description'=>"Modelo",'created_at'=>"2015-03-23",
                'updated_at'=>"2015-03-23",), 
+            
         ));
     }
 }

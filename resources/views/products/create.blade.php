@@ -52,9 +52,8 @@ active
             autoFocus: true,
             source: function (request, response) { //declared so I can send more than one parameter
                 $.ajax({
-                    url: '{{ url('jdescriptors') }}',
-                    dataType: "json",
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    type: "GET",
+                    "url": '{{ url('jdescriptors') }}',
                     data: {
                         term: request.term
                     },
@@ -101,6 +100,7 @@ active
             $.ajax({
                 type: "POST",
                 url: "{{ route('descriptors.store') }}",
+                'headers': {'X-CSRF-TOKEN': $('input[name="_token"]').val()},
                 data: descriptor,
                 dataType: 'json',
                 success: function (data) {

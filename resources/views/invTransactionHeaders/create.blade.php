@@ -6,8 +6,6 @@ active
 
 @section('header')
 
-
-
 <script type='text/javascript'>
     /*Shows a datepicker widget for
      * the purchase_date text input control
@@ -80,7 +78,9 @@ active
             ],
             "ajax": {
                 "url": "{{ url('jproducts') }}",
-                "type": "GET",
+                "type": "POST",
+                'headers': {'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                }
             },
             "columnDefs": [
                 {
@@ -96,8 +96,7 @@ active
             ]
         });
 
-        $('#example')
-                .removeClass('display')
+        $('#example').removeClass('display')
                 .addClass('table table-striped table-bordered');
     });
 

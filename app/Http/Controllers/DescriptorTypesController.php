@@ -123,7 +123,7 @@ class DescriptorTypesController extends Controller
         $message = usercan($action_code, Auth::user());
         if ($message) {
             return redirect()->back()->with('message', $message);
-        } else {
+        } 
             //Actual code to execute
             //Receives and updates new shop data
             $input = $request->all();
@@ -136,7 +136,6 @@ class DescriptorTypesController extends Controller
                 $descriptorType = DescriptorType::find($id);
                 $descriptorType->update($input);
                 return redirect()->route('descriptorTypes.index');
-        }
     }
 
     /**

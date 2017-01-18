@@ -58,7 +58,6 @@
         <script src="https://cdn.datatables.net/select/1.2.1/js/dataTables.select.min.js"></script>
         <script src="//cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
         <!--  custom scripts -->
-
         @yield('header') <!-- Header is here to include required functions from the included blade page-->
 
     </head>
@@ -326,6 +325,9 @@
                                 <a href="/products"><i class="fa fa-table fa-fw"></i> Products</a>
                             </li>
                             <li>
+                                <a href="/storages"><i class="fa fa-table fa-fw"></i> Storages</a>
+                            </li>
+                            <li>
                                 <a href="/productTypes"><i class="fa fa-table fa-fw"></i> Product Types</a>
                             </li>
                             <li>
@@ -415,7 +417,9 @@
 
                     @if ($errors->any())     
                     <div class="alert alert-warning">
-                        Errors found please check
+                        <ul class="error">
+                            {{ implode('',$errors->all(':message')) }}
+                        </ul>
                     </div>
                     @endif
 

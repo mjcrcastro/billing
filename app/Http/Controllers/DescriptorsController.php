@@ -161,17 +161,17 @@ class DescriptorsController extends Controller {
         }
         //Actual code to execute
         //Receives and updates new role  data
-        $input = Input::all();
-
+        $input = $request->all();
+        
         $this->validate($request, [
-            'description' => 'required|unique:descriptor_types,description,null,{{$id}}', 
-            'descriptorTypes_id' => 'required'
+            'description' => 'required|unique:descriptors,description,null,{{$id}}', 
+            'descriptorType_id' => 'required'
         ]);
 
             $descriptor = Descriptor::find($id);
             $descriptor->update($input);
-            return redirect()->route('descriptors.index', array('descriptorType_id' => Input::get('descriptorType_id'),
-                        'filter' => Input::get('filter'))
+            return redirect()->route('descriptors.index', array('descriptorType_id' => $request->get('descriptorType_id'),
+                        'filter' => $request->get('filter'))
             );
     }
 

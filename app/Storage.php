@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InvTransactionHeader extends Model
+class Storage extends Model
 {
     //which table to attach to
-    protected $table = 'inv_transaction_headers';
+    protected $table = 'storages';
     protected $guarded = array('id');
     
     //which field are used for mass assigment
@@ -16,9 +16,6 @@ class InvTransactionHeader extends Model
     ];
     
     public static $rules= array(
-        'transaction_type_id' => 'required',
-        'storage_id'=>'required',
-        'document_date' => 'required',
-        'document_number' => 'required'
+        'description' => 'required|unique:storages,description,null,{{$id}}'
     );
 }
