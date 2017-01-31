@@ -16,13 +16,17 @@ class CreateInvTransactionDetailsTable extends Migration
         //Contains transaction details
                Schema::create('inv_transaction_details', function(Blueprint $table) {
                 $table->increments('id');
-                $table->integer('transaction_header_id')
+                $table->integer('inv_transaction_header_id')
                         ->index()
                         ->references('id')
                         ->on('transaction_header');
-                $table->integer('item_id'); //item being moved
-                $table->float('item_qty');  //quantity of items being moved
-                $table->float('item_cost'); //total cost of items being moved
+                $table->integer('product_id')
+                        ->index()
+                        ->references('id')
+                        ->on('products'); //item being moved
+                $table->float('product_qty');  //quantity of items being moved
+                $table->float('product_cost'); //total cost of items being moved
+                $table->timestamps();
             });
     }
 

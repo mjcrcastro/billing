@@ -25,18 +25,18 @@ class DescriptorsController extends Controller {
             return redirect()->back()->with('message', $message);
         }// no need for else, since the redirect will take me out
 
-        $descriptorType_id = $request->get('descriptorType_id');
+        $descriptor_type_id = $request->get('descriptor_type_id');
 
         $filter = $request->get('filter');
 
-        $descriptors_label = $this->getDescriptorsLabel($descriptorType_id, $filter);
+        $descriptors_label = $this->getDescriptorsLabel($descriptor_type_id, $filter);
 
         $descriptors = $descriptors_label['descriptors'];
 
         $label = $descriptors_label['label'];
 
         return view('descriptors.index', compact('descriptors'))
-                        ->with('descriptorType_id', $descriptorType_id)
+                        ->with('descriptor_type_id', $descriptor_type_id)
                         ->with('filter', $filter)
                         ->with('label', $label);
     }
@@ -55,20 +55,20 @@ class DescriptorsController extends Controller {
         if ($message) {
             return redirect()->back()->with('message', $message);
         }
-        $descriptorType_Id = $request->get('descriptorType_id');
+        $descriptor_type_id = $request->get('descriptor_type_id');
         $descriptorTypes = DescriptorType::orderBy('description', 'asc')
                 ->pluck('description', 'id');
-        
+
         $label = '';
-        
-        if ($descriptorType_Id) {
+
+        if ($descriptor_type_id) {
             //say that the descriptor is of a specific descriptor type
-            $label = ' for ' . DescriptorType::find($descriptorType_Id)
+            $label = ' for ' . DescriptorType::find($descriptor_type_id)
                     ->description;
         }
 
         return view('descriptors.create')
-                        ->with('descriptorType_id', $descriptorType_Id)
+                        ->with('descriptor_type_id', $descriptor_type_id)
                         ->with('descriptorTypes', $descriptorTypes)
                         ->with('label', $label);
     }
@@ -86,22 +86,22 @@ class DescriptorsController extends Controller {
         }
         //Save new user data
         $input = request()->all();
-        
+
         $this->validate($request, [
-            'description' => 'required|unique:descriptors,description,null,{{$id}}', 
-            'descriptorType_id' => 'required'
+            'description' => 'required|unique:descriptors,description,null,{{$id}}',
+            'descriptor_type_id' => 'required'
         ]);
 
         $descriptor = Descriptor::create($input);
 
-        $descriptorType_id = $descriptor->descriptorType_id;
+        $descriptor_type_id = $descriptor->descriptor_type_id;
 
         if (request()->wantsJson()) {
             return response()->json($descriptor);
         }
 
         return redirect()->route('descriptors.index', array(
-                    'descriptorType_id' => $descriptorType_id,
+                    'descriptor_type_id' => $descriptor_type_id,
                     'filter' => $request->get('filter')
                         )
         );
@@ -126,22 +126,26 @@ class DescriptorsController extends Controller {
     public function edit(Request $request, $id) {
         //Redirect to Company editor
         $message = usercan('descriptors_edit', Auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }
+        if ($message) {return redirect()->back()->with('message', $message);}
         //Actual code to execute
         $descriptor = Descriptor::find($id);
         $descriptorTypes = DescriptorType::orderBy('description', 'asc')
                 ->pluck('description', 'id');
 
         if (is_null($descriptor)) {
-            return redirect()->route(
-                            'descriptors.index', array('descriptorType_id' => $request->get('descriptorType_id'),
-                        'filter' => $request->get('filter'))
+            return redirect()->route('descriptors.index', 
+                    array(
+                        'descriptor_type_id' => $request->get('descriptor_type_id'),
+                        'filter' => $request->get('filter')
+                    )
             );
         }
-        return view('descriptors.edit', compact('descriptor', 'descriptorTypes'), array('descriptorType_id' => $request->get('descriptorType_id'),
-                    'filter' => $request->get('filter'))
+        return view('descriptors.edit', 
+                compact('descriptor', 'descriptorTypes'), 
+                array(
+                    'descriptor_type_id' => $request->get('descriptor_type_id'),
+                    'filter' => $request->get('filter')
+                        )
         );
         // End of actual code to execute
     }
@@ -156,23 +160,25 @@ class DescriptorsController extends Controller {
 
         $action_code = 'descriptors_update';
         $message = usercan($action_code, Auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }
+        if ($message) {return redirect()->back()->with('message', $message);}
         //Actual code to execute
         //Receives and updates new role  data
         $input = $request->all();
-        
+
         $this->validate($request, [
-            'description' => 'required|unique:descriptors,description,null,{{$id}}', 
-            'descriptorType_id' => 'required'
+            'description' => 'required|unique:descriptors,description,null,{{$id}}',
+            'descriptor_type_id' => 'required'
         ]);
 
-            $descriptor = Descriptor::find($id);
-            $descriptor->update($input);
-            return redirect()->route('descriptors.index', array('descriptorType_id' => $request->get('descriptorType_id'),
-                        'filter' => $request->get('filter'))
-            );
+        $descriptor = Descriptor::find($id);
+        $descriptor->update($input);
+        return redirect()->route(
+                'descriptors.index', 
+                array(
+                    'descriptor_type_id' => $request->get('descriptor_type_id'),
+                    'filter' => $request->get('filter')
+                )
+        );
     }
 
     /**
@@ -185,14 +191,18 @@ class DescriptorsController extends Controller {
         //
         $action_code = 'descriptors_destroy';
         $message = usercan($action_code, Auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }
+        if ($message) {return redirect()->back()->with('message', $message);}
+        
         $descriptor = Descriptor::find($id);
-        $descriptorType_id = $request->get('descriptorType_id');
+        
+        $descriptor_type_id = $request->get('descriptor_type_id');
+        
         $descriptor->delete();
 
-        return redirect()->route('descriptors.index', array('descriptorType_id' => $descriptorType_id));
+        return redirect()->route(
+                'descriptors.index', 
+                array(
+                    'descriptor_type_id' => $descriptor_type_id));
     }
 
     /*

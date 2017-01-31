@@ -27,6 +27,7 @@ class CreateInvTransactionHeadersTable extends Migration
             $table->date('document_date'); //date in preprinted in document
             $table->string('document_number'); //number in preprinted document
             $table->text('note'); //any note the use would like to take down
+            $table->timestamps();
         });
     }
 

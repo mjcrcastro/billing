@@ -32,8 +32,8 @@ class JsonController extends Controller {
             $descriptors = Descriptor::select('descriptors.id as descriptor_id', 
                     'descriptors.description as label', 
                     'descriptor_types.description as category', 
-                    'descriptors.descriptorType_id')
-                            ->join('descriptor_types', 'descriptors.descriptorType_id', '=', 'descriptor_types.id')
+                    'descriptors.descriptor_type_id')
+                            ->join('descriptor_types', 'descriptors.descriptor_type_id', '=', 'descriptor_types.id')
                             ->whereRaw("LOWER(descriptors.description) like '%" .
                                     strtolower($filter) . "%'")
                             ->orderBy('descriptor_types.id', 'asc')
@@ -175,12 +175,12 @@ class JsonController extends Controller {
         if (Config::get('database.default') === 'mysql') {
 
             $dbRaw = "GROUP_CONCAT(DISTINCT descriptors.description "
-                    . "ORDER BY descriptors.descriptorType_id SEPARATOR ' ') "
+                    . "ORDER BY descriptors.descriptor_type_id SEPARATOR ' ') "
                     . "as product_description";
         } else {
 
             $dbRaw = "string_agg(descriptors.description, ' ' "
-                    . "ORDER BY descriptors.\"descriptorType_id\") "
+                    . "ORDER BY descriptors.\"descriptor_type_id\") "
                     . "as product_description";
         }
 

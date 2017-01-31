@@ -32,7 +32,7 @@ Route::resource('products', 'ProductsController');
 Route::resource('descriptors', 'DescriptorsController');
 Route::resource('descriptorTypes','DescriptorTypesController');
 Route::resource('productTypes','ProductTypesController');
-Route::resource('invTransactionHeaders','InvTransactionHeadersController');
+Route::resource('invTransactions','InvTransactionsController');
 Route::resource('storages','StoragesController');
 Route::get('jdescriptors', array('uses' => 'JsonController@descriptors'));
 Route::post('jproducts', array('uses' => 'JsonController@products'));

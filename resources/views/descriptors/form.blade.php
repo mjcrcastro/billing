@@ -10,9 +10,9 @@
     </div>
     @endif
 </div>
-<div class="form-group @if ($errors->has('descriptorType_id')) has-error @endif">
+<div class="form-group @if ($errors->has('descriptor_type_id')) has-error @endif">
     {{ Form::label('DescriptorType', 'Descriptor Type:') }}
-    {{ Form::select('descriptorType_id', $descriptorTypes, $descriptorType_id, array('class="form-control"')) }}
+    {{ Form::select('descriptor_type_id', $descriptorTypes, $descriptorType_id, array('class="form-control"')) }}
     @if ($errors->has('descriptorType_id')) 
     <div class="small">
         {{ $errors->first('descriptorType_id', ':message') }} 

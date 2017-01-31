@@ -81,9 +81,8 @@ class ProductsController extends Controller {
 
         $action_code = 'products_store';
         $message = usercan($action_code, Auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }//a return won't let the following code to continue
+        if ($message) {return redirect()->back()->with('message', $message);}
+        //a return won't let the following code to continue
 
         $descriptors = $request->get('descriptor_id');
 
@@ -166,7 +165,10 @@ class ProductsController extends Controller {
 
         $product = Product::find($id);
         $product->update($input);
-        return redirect()->route('products.index', array('product_type_id' => $request->get('product_type_id'),
+        return redirect()->route(
+                'products.index', 
+                array(
+                    'product_type_id' => $request->get('product_type_id'),
                     'filter' => $request->get('filter'))
         );
     }

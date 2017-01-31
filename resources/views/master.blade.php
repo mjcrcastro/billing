@@ -319,7 +319,7 @@
                                 <!-- /.nav-second-level -->
                             </li>
                             <li>
-                                <a href="/invTransactionHeaders"><i class="fa fa-table fa-fw"></i> Inv Transactions</a>
+                                <a href="/invTransactions"><i class="fa fa-table fa-fw"></i> Inv Transactions</a>
                             </li>
                             <li>
                                 <a href="/products"><i class="fa fa-table fa-fw"></i> Products</a>
@@ -413,7 +413,6 @@
             </nav>
 
             <div id="page-wrapper">
-                <div class="container-fluid">
 
                     @if ($errors->any())     
                     <div class="alert alert-warning">
@@ -432,7 +431,6 @@
                     @yield('main')
 
 
-                </div>
                 <div id="footer">
                     Copyright &copy; 2016 by Majcro<br/>
                     All Rights Reserved

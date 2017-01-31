@@ -17,7 +17,7 @@ class CreateDescriptorsTable extends Migration
             
                  Schema::create('descriptors', function($table) {
                    $table->increments('id');
-                   $table->integer('descriptorType_id')
+                   $table->integer('descriptor_type_id')
                            ->index()->references('id')->on('descriptor_types');
                    $table->string('description');
                    $table->timestamps();

@@ -34,7 +34,7 @@ active
         var table = $('#example').DataTable({
             "processing": true,
             "serverSide": true,
-             select: true,
+            select: true,
             "iDisplayLength": 5,
             "aLengthMenu": [
                 [5, 10, 25, 50, -1],
@@ -51,7 +51,7 @@ active
                 {
                     text: 'add to purchase',
                     action: function (e, dt, node, conf) {
-                        var aData = table.rows({ selected: true }).data().toArray();
+                        var aData = table.rows({selected: true}).data().toArray();
                         var values = $("input[id='productarray']")//gets the value of all elements whose id is productarray
                                 .map(function () {
                                     return parseInt($(this).val());
@@ -64,8 +64,8 @@ active
                                 $('<id="productRow">' +
                                         '<input type="hidden" id="productarray" name="product_id[]" value=' + aData[nCount]['product_id'] + '>' +
                                         '<div class="col-xs-4">  ' + aData[nCount]['product_description'] + ' </div> ' +
-                                        '<div class="col-xs-3"> {{ Form::number("amount[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
-                                        '<div class="col-xs-3"> {{ Form::number("total[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
+                                        '<div class="col-xs-3"> {{ Form::number("product_qty[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
+                                        '<div class="col-xs-3"> {{ Form::number("product_cost[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
                                         '<div class="col-xs-2"> <a href="#" id="removedescriptor">' +
                                         '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' +
                                         '</a></div> ' +
@@ -112,53 +112,44 @@ active
 @stop
 
 @section('main')
-
-<h1> Create Inv Transaction </h1>
-
-<div class="container-fluid">
-    {{ Form::open(array('route'=>'invTransactionHeaders.store','class'=>'form-horizontal','role'=>'form')) }}
-
-    <div class="form-group row">
-        <div class=" col-xs-2">
-            {{ Form::label('transactionType_id', 'Transaction Type',array("class"=>"control-label pull-right")) }}
-        </div>
-        <div class=" col-xs-10">
-            {{ Form::select('transactionType_id', $transactionTypes, null, array('class'=>'form-control')) }}
-        </div>
+<div class ="container-fluid">
+    <h1> Create Inv Transaction </h1>
+    {{ Form::open(array('route'=>'invTransactions.store','class'=>'form','role'=>'form')) }}
+    <div class="form-group col-xs-3 col-md-3">
+        {{ Form::label('storage_id', 'Storage',array("class"=>"control-label")) }}
+        {{ Form::select('storage_id', $storages, null, array('class'=>'form-control')) }}
     </div>
-    <div class="form-group row">
-        <div class=" col-xs-2">
-            {{ Form::label('date', 'Date', array("class"=>"control-label pull-right")) }}
-        </div>
-        <div class=" col-xs-10">
-            {{ Form::text('document_date', date('Y-m-d'), array('class'=>'form-control',"id"=>"document_date")) }}
-        </div>
+    <div class="form-group col-xs-3 col-md-3">
+        {{ Form::label('transaction_type_id', 'Type',array("class"=>"control-label")) }}
+        {{ Form::select('transaction_type_id', $transactionTypes, null, array('class'=>'form-control')) }}
     </div>
-
-    <div class="row">
-        <div class="col-xs-4">
-            Product
-        </div>
-        <div class="col-xs-3">
-            Qt
-        </div>
-        <div class="col-xs-3">
-            Cost
-        </div>
-        <div class="col-xs-2">
-        </div>
+    <div class="form-group col-xs-3 col-md-3">
+        {{ Form::label('date', 'Date', array("class"=>"control-label")) }}
+        {{ Form::text('document_date', date('Y-m-d'), array('class'=>'form-control',"id"=>"document_date")) }}
     </div>
-
-    <div class="row" id="products">
+    <div class="form-group col-xs-3 col-md-3">
+        {{ Form::label('document_number', 'Number', array("class"=>"control-label")) }}
+        {{ Form::text('document_number', null, array('class'=>'form-control',"id"=>"document_number")) }}
     </div>
-
-    <p></p>
-    {{ Html::link('#', 'Add Items',array('class'=>'col-xs-4 btn btn-success','id'=>'addProducts')) }}
-    {{ Form::submit('Submit', array('class'=>'col-xs-4 btn btn-primary')) }}
-    {{ link_to_route('invTransactionHeaders.index', 'Cancel', [],array('class'=>'col-xs-4 btn btn-default')) }}
+    <div class="col-xs-4">
+        <b>Product</b>
+    </div>
+    <div class="col-xs-3">
+        <b>Qt</b>
+    </div>
+    <div class="col-xs-3">
+        <b>Cost</b>
+    </div>
+    <div class="col-xs-2">
+    </div>
+    <div id="products">
+    </div>
+    {{ Html::link('#', 'Add Items',array('class'=>'btn btn-success form-control','id'=>'addProducts')) }}
+    {{ Form::submit('Submit', array('class'=>'btn btn-primary form-control')) }}
+    {{ link_to_route('invTransactions.index', 'Cancel', [],array('class'=>'btn btn-default form-control')) }}
     {{ Form::close() }}
-
 </div>
+
 
 {{-- bootstrap modal --}}
 
@@ -191,10 +182,5 @@ active
 </div>
 
 {{-- bootstrap modal --}}
-@if ($errors->any())
-<ul>
-    {{ implode('',$errors->all('<li class="error">:message</li>')) }}
-</ul>
-@endif
 
 @stop
