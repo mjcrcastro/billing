@@ -13,7 +13,7 @@
 {{ Form::open(array('class'=>'navbar-form navbar-left','method'=>'get','role'=>'search','route'=>'descriptors.index')) }}
     <div class="form-group">
         {{ Form::text('filter',$filter,array('class'=>'form-control','placeholder'=>'Search')) }}
-        {{ Form::hidden('descriptorType_id', $descriptorType_id) }}
+        {{ Form::hidden('descriptorType_id', $descriptor_type_id) }}
     </div>
 {{ Form::submit('Search', array('class'=>'btn btn-default')) }} 
 {{ Form::close() }}
@@ -24,7 +24,7 @@
 
     <h1> All descriptors {{ $label }} </h1>
     
-    <p> {{ link_to_route('descriptors.create', 'Add new descriptor',array('descriptorType_id'=>$descriptorType_id)) }} </p>
+    <p> {{ link_to_route('descriptors.create', 'Add new descriptor',array('descriptorType_id'=>$descriptor_type_id)) }} </p>
     
     @if ($descriptors->count())
         <table class="table table-striped table-ordered">

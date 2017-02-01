@@ -12,10 +12,10 @@
 </div>
 <div class="form-group @if ($errors->has('descriptor_type_id')) has-error @endif">
     {{ Form::label('DescriptorType', 'Descriptor Type:') }}
-    {{ Form::select('descriptor_type_id', $descriptorTypes, $descriptorType_id, array('class="form-control"')) }}
-    @if ($errors->has('descriptorType_id')) 
+    {{ Form::select('descriptor_type_id', $descriptor_types, $descriptor_type_id, array('class="form-control"')) }}
+    @if ($errors->has('descriptor_type_id')) 
     <div class="small">
-        {{ $errors->first('descriptorType_id', ':message') }} 
+        {{ $errors->first('descriptor_type_id', ':message') }} 
     </div>
     @endif
     <p></p>

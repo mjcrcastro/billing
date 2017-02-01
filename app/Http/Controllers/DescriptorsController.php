@@ -129,7 +129,7 @@ class DescriptorsController extends Controller {
         if ($message) {return redirect()->back()->with('message', $message);}
         //Actual code to execute
         $descriptor = Descriptor::find($id);
-        $descriptorTypes = DescriptorType::orderBy('description', 'asc')
+        $descriptor_types = DescriptorType::orderBy('description', 'asc')
                 ->pluck('description', 'id');
 
         if (is_null($descriptor)) {
@@ -141,7 +141,7 @@ class DescriptorsController extends Controller {
             );
         }
         return view('descriptors.edit', 
-                compact('descriptor', 'descriptorTypes'), 
+                compact('descriptor', 'descriptor_types'), 
                 array(
                     'descriptor_type_id' => $request->get('descriptor_type_id'),
                     'filter' => $request->get('filter')
@@ -231,19 +231,19 @@ class DescriptorsController extends Controller {
         }
     }
 
-    private function getDescriptorsLabel($descriptorType_id, $filter) {
+    private function getDescriptorsLabel($descriptor_type_id, $filter) {
         //returns descriptors array and label for use in index
         $label = '';
-        if ($filter and $descriptorType_id) {
+        if ($filter and $descriptor_type_id) {
             $descriptors = Descriptor::orderBy('description', 'asc')
                     ->where('description', 'like', '%' . $filter . '%')
-                    ->where('descriptorType_id', '=', $descriptorType_id);
-            $label = ' for ' . DescriptorType::find($descriptorType_id)
+                    ->where('descriptor_type_id', '=', $descriptor_type_id);
+            $label = ' for ' . DescriptorType::find($descriptor_type_id)
                     ->description;
-        } elseif ($descriptorType_id) {
+        } elseif ($descriptor_type_id) {
             $descriptors = Descriptor::orderBy('description', 'asc')
-                    ->where('descriptorType_id', '=', $descriptorType_id);
-            $label = ' for ' . DescriptorType::find($descriptorType_id)
+                    ->where('descriptor_type_id', '=', $descriptor_type_id);
+            $label = ' for ' . DescriptorType::find($descriptor_type_id)
                     ->description;
         } elseif ($filter) {
             $descriptors = Descriptor::orderBy('description', 'asc')

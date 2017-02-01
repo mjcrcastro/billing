@@ -13,7 +13,7 @@
 
     <p> {{ link_to_route('descriptorTypes.create', 'Add new descriptor type') }} </p>
 
-    @if ($descriptorTypes->count())
+    @if ($descriptor_types->count())
         <table class="table table-striped table-ordered">
             <thead>
                 <tr>
@@ -23,11 +23,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($descriptorTypes as $descriptorType)
+                @foreach ($descriptor_types as $descriptor_type)
                 <tr>
                     <td> {{ $descriptorType->description }}  </td>
 
-                    <td> {{ link_to_route('descriptorTypes.edit', 'Edit', array($descriptorType->id), array('class'=>'btn btn-info '.Config::get('global/default.button_size'))) }}  </td>
+                    <td> {{ link_to_route('descriptorTypes.edit', 'Edit', array($descriptor_type->id), array('class'=>'btn btn-info '.Config::get('global/default.button_size'))) }}  </td>
                     
                     <td> {{ link_to_route('descriptors.index', 'Descriptors', array('descriptorType_id'=>$descriptorType->id), array('class'=>'btn btn-info '.Config::get('global/default.button_size'))) }} </td>
                     

@@ -12,6 +12,6 @@ class Descriptor extends Model
     //which field are used for mass assigment
     protected $fillable = [
         'description',
-        'descriptorType_id'
+        'descriptor_type_id'
     ];
 }

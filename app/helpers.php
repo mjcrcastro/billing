@@ -31,10 +31,11 @@ function actionDescription($action_code) {
 
 function lastQuery() {
     //returns last executed query
+    DB::enableQueryLog();
     $queries = DB::getQueryLog();
-    $last_query = end($queries);
-
-    return $last_query;
+    DB::disableQueryLog();
+    
+    return $queries;
 }
 
 function getAllTables() {

@@ -132,17 +132,19 @@ class InvTransactionsController extends Controller {
             return redirect()->route('invTransactions.index');
         }
         
+        $productstransaction = $this->getProductsTransaction($id);
+        
         $transaction_types = TransactionType::orderBy('description', 'asc')
                 ->pluck('short_description', 'id');
         $storages = Storage::orderBy('description', 'asc')
                 ->pluck('description', 'id');
         
-        $products_transaction = json_encode($this->getProductsTransaction($id));
-        
-        return view('invTransactions.edit', compact('invTransactionHeader', 
-                'products_transaction',
+        return view('invTransactions.edit', compact(
+                'invTransactionHeader', 
+                'productstransaction',
                 'transaction_types',
-                'storages')
+                'storages'
+                )
                 );
         // End of actual code to execute
     }
@@ -200,20 +202,10 @@ class InvTransactionsController extends Controller {
         }
         return $transDetails;
     }
-
-    private function dbRaw() {
-        if (Config::get('database.default') === 'mysql') {
-            return "GROUP_CONCAT(DISTINCT descriptors.description ORDER BY "
-                    . "descriptors.descriptor_type_id SEPARATOR ' ') as product_description";
-        } else {
-            return "string_agg(descriptors.description, ' ' order by "
-                    . ' "descriptors"."descriptor_type_id" asc) as product_description';
-        }
-    }
     
-    private function getProductsTransaction($transaction_id) { 
-        Product::select('inv_transaction_details.id', 'products.id as product_id', 
-                DB::raw($this->dbRaw()), 'inv_transaction_details.product_qty', 'inv_transaction_details.product_cost')
+    public function getProductsTransaction($transaction_id) { 
+        $products_transaction = Product::select('inv_transaction_details.id', 'products.id as product_id', 
+                DB::raw($this->getDbRaw()), 'inv_transaction_details.product_qty', 'inv_transaction_details.product_cost')
                 ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products.id')
                 ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
                 ->join('inv_transaction_details', 'products.id', '=', 'inv_transaction_details.product_id')
@@ -222,6 +214,22 @@ class InvTransactionsController extends Controller {
                 ->groupBy('inv_transaction_details.id')
                 ->orderBy('inv_transaction_details.id')
                 ->get();
+        return $products_transaction;
     }
+    
+    private function getDbRaw() {
+        if (Config::get('database.default') === 'mysql') {
 
+            $dbRaw = "GROUP_CONCAT(DISTINCT descriptors.description "
+                    . "ORDER BY descriptors.descriptor_type_id SEPARATOR ' ') "
+                    . "as product_description";
+        } else {
+
+            $dbRaw = "string_agg(descriptors.description, ' ' "
+                    . "ORDER BY descriptors.\"descriptor_type_id\") "
+                    . "as product_description";
+        }
+
+        return $dbRaw;
+    }
 }

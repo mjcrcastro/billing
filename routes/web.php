@@ -14,7 +14,7 @@
 Route::get('/', function () {
     return view('master');
 });
-//Router for the assets  incase I have assets outside the public folder
+//Router for the assets  in case I have assets outside the public folder
 Route::get('{vendor_name}/{module}/{type}/{file}', [ function ($vendor_name, $module, $type, $file) {
     $module = ucfirst($module);
 
