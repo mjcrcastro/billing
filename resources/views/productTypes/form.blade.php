@@ -1,6 +1,4 @@
 
-
-
 <div class="form-group @if ($errors->has('description')) has-error @endif">
     {{ Form::label('description', 'Description:') }}
     {{ Form::text('description', null, array('class="form-control"')) }}

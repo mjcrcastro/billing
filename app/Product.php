@@ -26,7 +26,7 @@ class Product extends Model {
     public function productDescriptors() {
         return $this->hasMany('App\ProductDescriptor')
                         ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
-                        ->orderBy('descriptors.descriptorType_id');
+                        ->orderBy('descriptors.descriptor_type_id');
     }
 
     public function productType() {

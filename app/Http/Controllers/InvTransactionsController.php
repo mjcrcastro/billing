@@ -58,11 +58,11 @@ class InvTransactionsController extends Controller {
         if ($message) {
             return Redirect::back()->with('message', $message);
         }//a return won't let the following code to continue
-        $transactionTypes = TransactionType::orderBy('description', 'asc')
+        $transaction_types = TransactionType::orderBy('description', 'asc')
                 ->pluck('short_description', 'id');
         $storages = Storage::orderBy('description', 'asc')
                 ->pluck('description', 'id');
-        return view('invTransactions.create', compact('transactionTypes', 'storages'));
+        return view('invTransactions.create', compact('transaction_types', 'storages'));
     }
 
     /**
@@ -129,7 +129,8 @@ class InvTransactionsController extends Controller {
 
         $invTransactionHeader = InvTransactionHeader::find($id);
         if (is_null($invTransactionHeader)) {
-            return redirect()->route('invTransactions.index');
+            return redirect()->route('invTransactions.index')
+                    ->with('message','Transaction Header not found');
         }
         
         $productstransaction = $this->getProductsTransaction($id);
@@ -157,7 +158,28 @@ class InvTransactionsController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
-        //
+        
+        $message = usercan('purchases_update', Auth::user());
+        if ($message) { return Redirect::back()->with('message', $message); }
+        //usercan return won't let the following code to continue
+        $transHeadersData = $this->getTransHeaderData($request);
+        $invHeader = InvTransactionHeader::find($id);
+        $invHeader->update($transHeadersData);
+        //$purchaseValidation = Validator::make($incoming_purchase, Purchase::$rules);
+        //$detailValidation = Validator::make($purchaseDetails, ProductPurchase::$rules);
+        $transDetails = $this->getTransDetails($request);
+        
+        //delete all records not in the list of records sent
+        InvTransactionDetail::whereNotIn('id',$request->get('detail_id'))->delete();
+        foreach ($transDetails as $transDetail) {
+            if($transDetail['id'] === "null") {
+                $invHeader->invTransactionDetails()->create($transDetail);
+            }else{
+                $currDetail = InvTransactionDetail::find($transDetail['id']);
+                $currDetail->update($transDetail);
+            }
+        }
+        return redirect()->route('invTransactions.index');
     }
 
     /**
@@ -193,8 +215,10 @@ class InvTransactionsController extends Controller {
         $transProducts = $request->get('product_id');
         $product_qty = $request->get('product_qty');
         $product_cost = $request->get('product_cost');
+        $detail_id = $request->get('detail_id');
         for ($nCount = 0; $nCount < count($transProducts); $nCount++) {
             $transDetails[] = array(
+                'id' => $detail_id[$nCount],
                 'product_id' => $transProducts[$nCount],
                 'product_qty' => $product_qty[$nCount],
                 'product_cost' => $product_cost[$nCount]

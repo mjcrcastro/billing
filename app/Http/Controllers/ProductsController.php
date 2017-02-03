@@ -66,9 +66,9 @@ class ProductsController extends Controller {
         $descriptors = Descriptor::orderBy('description')->get()->pluck('description', 'id');
 
         //to be used by a modal form on descriptor registration
-        $descriptorTypes = DescriptorType::orderBy('description')->get()->pluck('description', 'id');
+        $descriptor_types = DescriptorType::orderBy('description')->get()->pluck('description', 'id');
 
-        return view('products.create', compact('descriptors', 'descriptorTypes'));
+        return view('products.create', compact('descriptors', 'descriptor_types'));
     }
 
     /**

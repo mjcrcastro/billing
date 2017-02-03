@@ -69,7 +69,7 @@ active
             },
             select: function (event, ui) { //function to run on select event
                 addDescriptorToList(ui.item.descriptor_id,
-                        ui.item.descriptorType_id,
+                        ui.item.descriptor_type_id,
                         ui.item.category,
                         ui.item.label);
                 return false; //returns false to cancel the event
@@ -91,10 +91,10 @@ active
         $(document).on('click', '#addNewDescriptor', function () {
             //Adds a new descriptor to database
             var newDescription = $('#descriptor').val();
-            var descriptorType_id = parseInt($('#descriptorType option:selected').val());
-            var category = $('#descriptorType option:selected').text();
+            var descriptor_type_id = parseInt($('#descriptor_type option:selected').val());
+            var category = $('#descriptor_type option:selected').text();
             var descriptor = {
-                descriptorType_id: descriptorType_id,
+                descriptor_type_id: descriptor_type_id,
                 description: newDescription
             };
             $.ajax({
@@ -106,7 +106,7 @@ active
                 success: function (data) {
                     addDescriptorToList(
                             data.id,
-                            parseInt(data.descriptorType_id),
+                            parseInt(data.descriptor_type_id),
                             category,
                             data.description
                             );
@@ -130,9 +130,9 @@ active
         });
     });
 
-    function addDescriptorToList(id, descriptorType_id, category, description) {
+    function addDescriptorToList(id, descriptor_type_id, category, description) {
         //adds a hidden input with the descriptor's id along with 
-        //a hidden input with the descriptorType's id along as well as 
+        //a hidden input with the descriptor_type's id along as well as 
         //a href with the description, and an image link 
         //to be able to remove the descriptor later
         $('#descriptor').val(''); //clear text from the textbox
@@ -142,12 +142,12 @@ active
                     return parseInt($(this).val());
                 }).get();
 
-        var valuesDescriptorType = $("input[id='descriptorTypeArray']")//gets the value of all elements whose id is productarray
+        var valuesDescriptor_type = $("input[id='descriptor_typeArray']")//gets the value of all elements whose id is productarray
                 .map(function () {
                     return parseInt($(this).val());
                 }).get();
 
-        if ($.inArray(descriptorType_id, valuesDescriptorType) !== -1) {
+        if ($.inArray(descriptor_type_id, valuesDescriptor_type) !== -1) {
             alert('There is already a descriptor of this type');
             return false;
         }
@@ -155,7 +155,7 @@ active
         if (!valuesDescriptor.length || $.inArray(id, valuesDescriptor) === -1) {
             $('<p> ' +
                     '<input type="hidden" name="descriptor_id[]" id="descriptorArray" value=' + id + '>' +
-                    '<input type="hidden" name="descriptorType_id[]" id="descriptorTypeArray" value=' + descriptorType_id + '>' +
+                    '<input type="hidden" name="descriptor_type_id[]" id="descriptor_typeArray" value=' + descriptor_type_id + '>' +
                     category + ': ' + description + ' ' +
                     '<a href="#" id="removedescriptor">' +
                     '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
@@ -193,9 +193,9 @@ active
                                           'disabled',
                                           'id'=>'description')) }}
 
-                        {{ Form::label('DescriptorType', 'Descriptor Type:') }}
-                        {{ Form::select('descriptorType_id', $descriptorTypes, 
-                                    null, array('class="form-control"','id'=>'descriptorType')) }}
+                        {{ Form::label('Descriptor_type', 'Descriptor Type:') }}
+                        {{ Form::select('descriptor_type_id', $descriptor_types, 
+                                    null, array('class="form-control"','id'=>'descriptor_type')) }}
                         <p></p>
                         {{ Html::link('#','Add descriptor',
                             array('class'=>'btn btn-primary',
