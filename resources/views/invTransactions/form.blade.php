@@ -1,34 +1,34 @@
 <div class="form-group form-group-sm">
-    {{ Form::label('storage_id', 'Storage',array("class"=>"control-label")) }}
+    {{ Form::label('storage_id', 'Storage',array("class"=>"control-label small")) }}
     {{ Form::select('storage_id', $storages, null, array('class'=>'form-control')) }}
 </div>    
 <div class="form-group form-group-sm">
-    {{ Form::label('transaction_type_id', 'Type',array("class"=>"control-label")) }}
+    {{ Form::label('transaction_type_id', 'Type',array("class"=>"control-label small")) }}
     {{ Form::select('transaction_type_id', $transaction_types, null, array('class'=>'form-control')) }}
 </div>
 <div class="form-group form-group-sm">
-    {{ Form::label('document_date', 'Date', array("class"=>"control-label")) }}
+    {{ Form::label('document_date', 'Date', array("class"=>"control-label small")) }}
     {{ Form::text('document_date', date('Y-m-d'), array('class'=>'form-control',"id"=>"document_date")) }}
 </div>
 <div class="form-group form-group-sm">
-    {{ Form::label('document_number', 'Number', array("class"=>"control-label")) }}
+    {{ Form::label('document_number', 'Number', array("class"=>"control-label small")) }}
     {{ Form::text('document_number', null, array('class'=>'form-control',"id"=>"document_number")) }}
 </div>
 <div class="form-group form-group-sm">
-    {{ Form::label('note', 'Note', array("class"=>"control-label")) }}
+    {{ Form::label('note', 'Note', array("class"=>"control-label small")) }}
     {{ Form::text('note', null, array('class'=>'form-control',"id"=>"note")) }}
 </div>
 <div class="row">
-    <div class="col-xs-4">
+    <div class="col-xs-4 small">
         <b>Product</b>
     </div>
-    <div class="col-xs-3">
+    <div class="col-xs-3 small">
         <b>Qt</b>
     </div>
-    <div class="col-xs-3">
+    <div class="col-xs-3 small">
         <b>Cost</b>
     </div>
-    <div class="col-xs-2">
+    <div class="col-xs-2 small">
     </div>
 </div>
 <hr>
