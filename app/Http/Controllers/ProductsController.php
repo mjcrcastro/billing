@@ -9,6 +9,8 @@ use App\Descriptor;
 use App\DescriptorType;
 use App\ProductDescriptor;
 use App\ProductType;
+use App\InvTransactionHeader;
+use App\InvTransactionDetail;
 use Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,13 +83,15 @@ class ProductsController extends Controller {
 
         $action_code = 'products_store';
         $message = usercan($action_code, Auth::user());
-        if ($message) {return redirect()->back()->with('message', $message);}
+        if ($message) {
+            return redirect()->back()->with('message', $message);
+        }
         //a return won't let the following code to continue
 
         $descriptors = $request->get('descriptor_id');
 
         $existingProduct = $this->productGet($descriptors);
-        
+
         // check if the product has already been created
         if (empty($existingProduct)) {//check for duplicate products
             $product = new Product;
@@ -114,7 +118,43 @@ class ProductsController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        //
+        //Return a kardex report for the selected product
+        $action_code = 'products_show';
+
+        $message = usercan($action_code, auth::user());
+        if ($message) {
+            return redirect()->back()->with('message', $message);
+        }//a return won't let the following code to continue
+        //calculate the total from the previous page
+       
+        $transDetails = InvTransactionHeader::select(
+                DB::raw('sum(product_cost*effect_inv) AS efe_cost'),
+                DB::raw('sum(product_qty*effect_inv) AS efe_qty'))
+                ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
+                ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
+                ->where('inv_transaction_details.product_id','=',$id)
+                ->groupBy('inv_transaction_details.product_id');
+
+        $beforeCost = $transDetails->first('efe_cost');
+        $beforeQty = $transDetails->first('efe_qty');
+        
+        $product = Product::find($id);
+        $transactions = InvTransactionHeader::select(
+                'product_qty', 
+                'product_cost', 
+                'document_date', 
+                'document_number', 
+                'note',
+                'short_description',
+                DB::raw('product_cost*effect_inv AS efe_cost'),
+                DB::raw('product_qty*effect_inv AS efe_qty')
+                )
+                ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
+                ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
+                ->where('inv_transaction_details.product_id', '=', $id)
+                ->orderBy('document_date', 'desc')
+                ->paginate(Config::get('global/default.rows'));
+        return view('products.kardex', compact('product', 'transactions','beforeCost','beforeQty'));
     }
 
     /**
@@ -166,8 +206,7 @@ class ProductsController extends Controller {
         $product = Product::find($id);
         $product->update($input);
         return redirect()->route(
-                'products.index', 
-                array(
+                        'products.index', array(
                     'product_type_id' => $request->get('product_type_id'),
                     'filter' => $request->get('filter'))
         );
@@ -213,13 +252,13 @@ class ProductsController extends Controller {
                 ->havingRaw($havingRaw)
                 ->groupBy('product_id')
                 ->get();
-        
+
         if (count($productArray) === 0) {
             return null;
         } else {
             $descriptorString = '';
             foreach (Product::find($productArray->first()->product_id)->productDescriptors as $productdescriptor) {
-                 $descriptorString = $descriptorString . ' '.   $productdescriptor->descriptor->description.' ';
+                $descriptorString = $descriptorString . ' ' . $productdescriptor->descriptor->description . ' ';
             }
             return $descriptorString;
         }
@@ -236,5 +275,5 @@ class ProductsController extends Controller {
         //cut the trailing ','
         return substr($filter, 0, strlen($filter) - 1);
     }
-    
+
 }

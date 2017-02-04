@@ -22,7 +22,7 @@ class TransactionTypesSeeder extends Seeder
                'updated_at'=>"2015-03-23",),
            array('id'=>2,
                'short_description'=>"SAL_INV",
-               'description'=>"Entrada de Inventario",
+               'description'=>"Salida de Inventario",
                'effect_inv'=>'-1',
                'req_qty'=>TRUE,
                'req_val'=>TRUE,

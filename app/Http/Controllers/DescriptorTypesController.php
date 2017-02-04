@@ -22,8 +22,8 @@ class DescriptorTypesController extends Controller
         if ($message) {
             return Redirect::back()->with('message', $message);
         } else {
-            $descriptorTypes = DescriptorType::paginate(7);
-            return view('descriptorTypes.index', compact('descriptorTypes'));
+            $descriptor_types = DescriptorType::paginate(7);
+            return view('descriptorTypes.index', compact('descriptor_types'));
         }
     }
 

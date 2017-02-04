@@ -88,7 +88,7 @@ class DescriptorsController extends Controller {
         $input = request()->all();
 
         $this->validate($request, [
-            'description' => 'required|unique:descriptors,description,null,{{$id}}',
+            'description' => 'required|unique:descriptors,description,null',
             'descriptor_type_id' => 'required'
         ]);
 
@@ -166,7 +166,7 @@ class DescriptorsController extends Controller {
         $input = $request->all();
 
         $this->validate($request, [
-            'description' => 'required|unique:descriptors,description,null,{{$id}}',
+            'description' => 'required|unique:descriptors,description,'.$id,
             'descriptor_type_id' => 'required'
         ]);
 
