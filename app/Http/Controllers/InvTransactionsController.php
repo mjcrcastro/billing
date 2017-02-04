@@ -169,6 +169,10 @@ class InvTransactionsController extends Controller {
         //$detailValidation = Validator::make($purchaseDetails, ProductPurchase::$rules);
         $transDetails = $this->getTransDetails($request);
         
+        if(count($transDetails) === 0) {
+            return redirect()->back()->with('message', 'No products found'); 
+        }
+        
         //delete all records not in the list of records sent
         InvTransactionDetail::whereNotIn('id',$request->get('detail_id'))->delete();
         foreach ($transDetails as $transDetail) {
@@ -206,7 +210,7 @@ class InvTransactionsController extends Controller {
             "storage_id" => $request->get('storage_id'),
             "document_date" => $request->get('document_date'),
             'document_number' => $request->get('document_number'),
-            'note' => $request->get('note', 'none')
+            'note' => $request->get('note')
         );
         return $transHeadersData;
     }
@@ -216,6 +220,7 @@ class InvTransactionsController extends Controller {
         $product_qty = $request->get('product_qty');
         $product_cost = $request->get('product_cost');
         $detail_id = $request->get('detail_id');
+        $transDetails = Array();
         for ($nCount = 0; $nCount < count($transProducts); $nCount++) {
             $transDetails[] = array(
                 'id' => $detail_id[$nCount],

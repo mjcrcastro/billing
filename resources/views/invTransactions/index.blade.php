@@ -26,6 +26,7 @@ active
     <thead>
         <tr>
             <th>{{Lang::get('invTransactions.store')}}</th>
+            <th>Note</th>
             <th>Date</th>
             <th></th>
             <th></th>
@@ -37,6 +38,10 @@ active
 
             <td> 
                 {{ $invTransactionHeader->transType->description }}
+            </td>
+            
+            <td>
+                {{ $invTransactionHeader->note }}
             </td>
 
             <td>

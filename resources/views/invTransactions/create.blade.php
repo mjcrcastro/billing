@@ -8,7 +8,7 @@ active
 @section('main')
 <div class ="container-fluid">
     <h1> Create Inv Transaction </h1>
-    {{ Form::open(array('route'=>'invTransactions.store','class'=>'form','role'=>'form')) }}
+    {{ Form::open(array('route'=>'invTransactions.store','class'=>'form')) }}
         @include('invTransactions.form')
     {{ Form::close() }}
 </div>

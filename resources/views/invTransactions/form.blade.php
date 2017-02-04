@@ -14,17 +14,24 @@
     {{ Form::label('document_number', 'Number', array("class"=>"control-label")) }}
     {{ Form::text('document_number', null, array('class'=>'form-control',"id"=>"document_number")) }}
 </div>
-<div class="col-xs-4">
-    <b>Product</b>
+<div class="form-group form-group-sm">
+    {{ Form::label('note', 'Note', array("class"=>"control-label")) }}
+    {{ Form::text('note', null, array('class'=>'form-control',"id"=>"note")) }}
 </div>
-<div class="col-xs-3">
-    <b>Qt</b>
+<div class="row">
+    <div class="col-xs-4">
+        <b>Product</b>
+    </div>
+    <div class="col-xs-3">
+        <b>Qt</b>
+    </div>
+    <div class="col-xs-3">
+        <b>Cost</b>
+    </div>
+    <div class="col-xs-2">
+    </div>
 </div>
-<div class="col-xs-3">
-    <b>Cost</b>
-</div>
-<div class="col-xs-2">
-</div>
+<hr>
 <div id="products">
 </div>
 <br>
@@ -87,16 +94,16 @@
                             //$.inArray only compares between numbers or characters
                             //so I converted the values to Int within the array before comparison.
                             if (!values.length || $.inArray(aData[nCount]['product_id'], values) === -1) {
-                                $('<id="productRow">' +
-                                        '<input type="hidden" id="detailarray" name="detail_id[]" value=' + null + '>' +
-                                        '<input type="hidden" id="productarray" name="product_id[]" value=' + aData[nCount]['product_id'] + '>' +
-                                        '<div class="col-xs-4">  ' + aData[nCount]['product_description'] + ' </div> ' +
+                                $('<id="productRow" class="row">' +
+                                        '<input type="hidden" name="detail_id[]" value=' + null + '>' +
+                                        '<input type="hidden" name="product_id[]" value=' + aData[nCount]['product_id'] + '>' +
+                                        '<div class="col-xs-3">  ' + aData[nCount]['product_description'] + ' </div> ' +
                                         '<div class="col-xs-3"> {{ Form::number("product_qty[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
-                                        '<div class="col-xs-3"> {{ Form::number("product_cost[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
+                                        '<div class="col-xs-4"> {{ Form::number("product_cost[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
                                         '<div class="col-xs-2"> <a href="#" id="removedescriptor">' +
                                         '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' +
                                         '</a></div> ' +
-                                        '</div>').appendTo('#products');
+                                        '</div><hr>').appendTo('#products');
                                 $('#myModal').modal('hide');
                             }
                         }
