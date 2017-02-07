@@ -56,7 +56,7 @@ class DescriptorsController extends Controller {
             return redirect()->back()->with('message', $message);
         }
         $descriptor_type_id = $request->get('descriptor_type_id');
-        $descriptorTypes = DescriptorType::orderBy('description', 'asc')
+        $descriptor_types = DescriptorType::orderBy('description', 'asc')
                 ->pluck('description', 'id');
 
         $label = '';
@@ -69,7 +69,7 @@ class DescriptorsController extends Controller {
 
         return view('descriptors.create')
                         ->with('descriptor_type_id', $descriptor_type_id)
-                        ->with('descriptorTypes', $descriptorTypes)
+                        ->with('descriptor_types', $descriptor_types)
                         ->with('label', $label);
     }
 

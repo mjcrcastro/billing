@@ -174,7 +174,8 @@ class InvTransactionsController extends Controller {
         }
         
         //delete all records not in the list of records sent
-        InvTransactionDetail::whereNotIn('id',$request->get('detail_id'))->delete();
+        InvTransactionDetail::where('inv_transaction_header_id','=',$id)
+                ->whereNotIn('id',$request->get('detail_id'))->delete();
         foreach ($transDetails as $transDetail) {
             if($transDetail['id'] === "null") {
                 $invHeader->invTransactionDetails()->create($transDetail);

@@ -15,6 +15,8 @@ use Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class ProductsController extends Controller {
 
@@ -38,12 +40,12 @@ class ProductsController extends Controller {
             //productDescriptors returns all of this product descriptors
             $products = Product::whereHas('productDescriptors', function($q) {
                         $q->where('description', 'like', '' . '%' . Input::get('filter') . '' . '%');
-                    })->paginate(config('global/default.rows'));
+                    })->orderBy('id', 'desc')->paginate(config('global/rows_page'));
             return view('products.index', compact('products'))
                             ->with('filter', $filter);
         } else {
-            $products = Product::paginate(config::get('global/default.rows'));
-
+            $products = Product::orderBy('id', 'desc')
+                    ->paginate(config('global.rows_page'));
             return view('products.index', compact('products'))
                             ->with('filter', $filter);
         }
@@ -124,37 +126,20 @@ class ProductsController extends Controller {
         $message = usercan($action_code, auth::user());
         if ($message) {
             return redirect()->back()->with('message', $message);
-        }//a return won't let the following code to continue
+        }
+        // //a return won't let the following code to continue
         //calculate the total from the previous page
-       
-        $transDetails = InvTransactionHeader::select(
-                DB::raw('sum(product_cost*effect_inv) AS efe_cost'),
-                DB::raw('sum(product_qty*effect_inv) AS efe_qty'))
-                ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
-                ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
-                ->where('inv_transaction_details.product_id','=',$id)
-                ->groupBy('inv_transaction_details.product_id');
 
-        $beforeCost = $transDetails->first('efe_cost');
-        $beforeQty = $transDetails->first('efe_qty');
-        
         $product = Product::find($id);
-        $transactions = InvTransactionHeader::select(
-                'product_qty', 
-                'product_cost', 
-                'document_date', 
-                'document_number', 
-                'note',
-                'short_description',
-                DB::raw('product_cost*effect_inv AS efe_cost'),
-                DB::raw('product_qty*effect_inv AS efe_qty')
-                )
-                ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
-                ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
-                ->where('inv_transaction_details.product_id', '=', $id)
-                ->orderBy('document_date', 'desc')
-                ->paginate(Config::get('global/default.rows'));
-        return view('products.kardex', compact('product', 'transactions','beforeCost','beforeQty'));
+
+        $transactions = $this->getKardex($id);
+        
+        return view('products.kardex', compact(
+                'product', 
+                'transactions',
+                'beforeCost', 
+                'beforeQty')
+                );
     }
 
     /**
@@ -274,6 +259,69 @@ class ProductsController extends Controller {
         }
         //cut the trailing ','
         return substr($filter, 0, strlen($filter) - 1);
+    }
+
+    private function getKardex($id) {
+
+        $transactions = InvTransactionHeader::select(
+                                'product_qty', 'product_cost', 'document_date', 'document_number', 'note', 'short_description', DB::raw('product_cost*effect_inv AS efe_cost'), DB::raw('product_qty*effect_inv AS efe_qty'))
+                        ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
+                        ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
+                        ->where('inv_transaction_details.product_id', '=', $id)
+                        ->orderBy('document_date', 'asc')->get()->toArray();
+
+        $lastCost = 0;
+        $lastQty = 0;
+        $nCount = 0;
+        $transArray = array();
+        foreach ($transactions as &$transaction) {
+            $transArray[] = [
+                $transaction['short_description'],
+                $transaction['document_number'],
+                $transaction['document_date'],
+                $transaction['note'],
+                $transaction['product_qty'],
+                round($transaction['product_cost'],2),
+                round(($lastCost + $transaction['efe_cost']) / ($lastQty + $transaction['efe_qty']),2),
+                round($lastCost + $transaction['efe_cost'],2),
+                $lastQty + $transaction['efe_qty']
+            ];
+
+            $lastCost = round($lastCost,2) + round($transaction['efe_cost'],2);
+            $lastQty = $lastQty + $transaction['efe_qty'];
+            $nCount += 1;
+        }
+
+        return $transArray;
+    }
+
+    private function getKardexByPage($request, $id) {
+        //do a running sum for the data in the report
+        //running my a custom paginator in order to handle the running totals
+        $perPage = Config::get('global/rows_page', 8);
+        $pageStart = $request->get('page', 1);
+        //run a limited query for results on one page.
+        $transactions = InvTransactionHeader::select(
+                                'product_qty', 'product_cost', 'document_date', 'document_number', 'note', 'short_description', DB::raw('product_cost*effect_inv AS efe_cost'), DB::raw('product_qty*effect_inv AS efe_qty'))
+                        ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
+                        ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
+                        ->where('inv_transaction_details.product_id', '=', $id)
+                        ->orderBy('document_date', 'asc')
+                        ->skip($perPage * ($pageStart - 1))->take($perPage)->get();
+
+        $lastCost = 0;
+        $lastQty = 0;
+        $nCount = 0;
+        //add running sum to the transactions
+        foreach ($transactions as &$transaction) {
+            $transaction['runningCost'] = $lastCost + $transaction['efe_cost'];
+            $transaction['runningQty'] = $lastQty + $transaction['efe_qty'];
+            $lastCost = $transaction['runningCost'];
+            $lastQty = $transaction['runningQty'];
+            $nCount += 1;
+        }
+
+        return new LengthAwarePaginator($transactions, $nCount, $perPage, Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
     }
 
 }

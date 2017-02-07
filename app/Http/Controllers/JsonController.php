@@ -76,45 +76,7 @@ class JsonController extends Controller {
             return response()->json($response);
         }
     }
-
-    public function productsShoppingList() {
-
-        $action_code = 'products_shopping_list_json';
-
-        $message = Helper::usercan($action_code, Auth::user());
-        if ($message) {
-            return Redirect::back()->with('message', $message);
-        }
-
-        if (Request::ajax()) {
-
-            $filter = Input::get('search.value');
-
-            $dbRaw = $this->getDbRaw();
-
-            $inputColumns = Input::get('columns');
-
-            $inputOrder = Input::get('order');
-
-            $orderBy = array(
-                'column' => $inputColumns[$inputOrder[0]['column']]['data'],
-                'sortOrder' => $inputOrder[0]['dir']);
-
-            $pFiltered = $this->prodShoppingList($filter, Input::get('shop_id'), $dbRaw, $orderBy);
-
-            $pUnFiltered = $this->prodShoppingList(null, Input::get('shop_id'), $dbRaw, $orderBy);
-
-            $response['draw'] = Input::get('draw');
-            $response['recordsTotal'] = $pUnFiltered->get()->count();
-            $response['recordsFiltered'] = $pFiltered->get()->count();
-
-            $response['data'] = $pFiltered->skip(Input::get('start'))
-                            ->take(Input::get('length'))->get();
-
-            return Response::json($response);
-        }
-    }
-
+    
     /*
      * Receives a seach string and converts every word into individual
      * words that are used to prepare a havingRaw clause for a search of product
@@ -138,37 +100,6 @@ class JsonController extends Controller {
         }
 
         return substr($having, 5, strlen($having) - 5);
-    }
-
-    private function prodShoppingList($filter, $shop_id, $dbRaw, $orderBy) {
-        //I need to use three subqueries to get the latest price from db
-
-        $subLastDate = DB::table('products_purchases')
-                ->select('products_purchases.product_id', DB::raw('max(purchases.purchase_date) as last_date'))
-                ->join('purchases', 'purchases.id', '=', 'products_purchases.purchase_id')
-                ->groupBy('products_purchases.product_id');
-
-        $subLastPpId = Purchase::select(DB::raw('max(products_purchases.id) AS id'))
-                ->from(DB::raw('(' . $subLastDate->toSql() . ') AS lastdate'))
-                ->join('products_purchases', 'products_purchases.product_id', '=', 'lastdate.product_id')
-                ->groupBy('lastdate.product_id');
-
-        $products = Product::select(DB::raw($dbRaw), 'products_purchases.product_id', DB::raw('avg(products_purchases.total/products_purchases.amount) as price'))
-                ->from(DB::raw('(' . $subLastPpId->toSql() . ') AS lastppid'))
-                ->join('products_purchases', 'lastppid.id', '=', 'products_purchases.id')
-                ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products_purchases.product_id')
-                ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
-                ->join('purchases', 'purchases.id', '=', 'products_purchases.purchase_id')
-                ->groupBy('purchases.shop_id')
-                ->groupBy('products_purchases.product_id')
-                ->orderBy($orderBy['column'], $orderBy['sortOrder']);
-
-        if ($filter) {
-
-            $products = $products->havingRaw($this->getHavingRaw($filter));
-        }
-
-        return $products;
     }
 
     private function getDbRaw() {
@@ -204,5 +135,6 @@ class JsonController extends Controller {
 
         return $products;
     }
+    
 
 }

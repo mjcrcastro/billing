@@ -12,9 +12,7 @@ return [
       |
      */
 
-    'rows_page' => [
-        10,
-    ],
+    'rows_page' => 8,
     
         ]
 ;
