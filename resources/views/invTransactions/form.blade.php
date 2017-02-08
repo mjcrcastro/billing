@@ -8,7 +8,7 @@
 </div>
 <div class="form-group form-group-sm">
     {{ Form::label('document_date', 'Date', array("class"=>"control-label small")) }}
-    {{ Form::text('document_date', date('Y-m-d'), array('class'=>'form-control',"id"=>"document_date")) }}
+    {{ Form::text('document_date', null, array('class'=>'form-control')) }}
 </div>
 <div class="form-group form-group-sm">
     {{ Form::label('document_number', 'Number', array("class"=>"control-label small")) }}
@@ -19,19 +19,18 @@
     {{ Form::text('note', null, array('class'=>'form-control',"id"=>"note")) }}
 </div>
 <div class="row">
-    <div class="col-xs-4 small">
+    <div class="col-xs-5 small">
         <b>Product</b>
     </div>
     <div class="col-xs-3 small">
         <b>Qt</b>
     </div>
     <div class="col-xs-3 small">
-        <b>Cost</b>
+        <b id="cost_label" >Cost</b>
     </div>
-    <div class="col-xs-2 small">
+    <div class="col-xs-1 small">
     </div>
 </div>
-<hr>
 <div id="products">
 </div>
 <br>
@@ -94,19 +93,13 @@
                             //$.inArray only compares between numbers or characters
                             //so I converted the values to Int within the array before comparison.
                             if (!values.length || $.inArray(aData[nCount]['product_id'], values) === -1) {
-                                $('<id="productRow" class="row">' +
-                                        '<input type="hidden" name="detail_id[]" value=' + null + '>' +
-                                        '<input type="hidden" name="product_id[]" value=' + aData[nCount]['product_id'] + '>' +
-                                        '<div class="col-xs-3">  ' + aData[nCount]['product_description'] + ' </div> ' +
-                                        '<div class="col-xs-3"> {{ Form::number("product_qty[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
-                                        '<div class="col-xs-4"> {{ Form::number("product_cost[]",null,array("class"=>"form-control input-sm","step"=>"any")) }} </div> ' +
-                                        '<div class="col-xs-2"> <a href="#" id="removedescriptor">' +
-                                        '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' +
-                                        '</a></div> ' +
-                                        '</div><hr>').appendTo('#products');
-                                $('#myModal').modal('hide');
+                                addToProducts(null,
+                                        aData[nCount]['product_id'],
+                                        aData[nCount]['product_description'],
+                                        null);
                             }
                         }
+                        $('#myModal').modal('hide');
                     }
                 }
             ],
@@ -134,4 +127,33 @@
                 .addClass('table table-striped table-bordered');
     });
 
+</script>
+
+<script type='text/javascript'>
+    /*dynamically adds a product to the product list
+     * id: corresponds to inv_transactions_detail.id
+     * product row is added <div id="products">
+     */
+    function addToProducts(id, product_id, product_description, product_qty, product_cost) {
+
+        $('<div id="productRow" class="row">' +
+                '<div><input type="hidden" id="detailarray" name="detail_id[]" value=' + id + '></div>' +
+                '<div><input type="hidden" id="productarray" name="product_id[]" value=' + product_id + '></div>' +
+                '<div class="col-xs-5 small">  ' + product_description + '  </div>' +
+                '<div class="col-xs-3"> <input class="form-control input-sm" name="product_qty[]" type="number" min ="0" step="0.01" value="' + product_qty + '"> </div> ' +
+                '<div class="col-xs-3"> <input class="form-control input-sm" name="product_cost[]" type="number" min ="0" step="0.01" value="' + product_cost + '"> </div> ' +
+                '<div class="col-xs-1"> <a href="#" id="removedescriptor">' + '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' + '</a></div>' +
+                '</div>').appendTo('#products');
+    }
+</script>
+
+<script type='text/javascript'>
+    $("#transaction_type_id").change(function () {
+        $var = $("#transaction_type_id").find(":selected").val();
+        if( $var === "{{ $fact_id }}") {
+            $("b#cost_label").html("Price");
+        }else{
+            $("b#cost_label").html("Cost");
+        };
+    });
 </script>

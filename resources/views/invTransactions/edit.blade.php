@@ -19,32 +19,17 @@ active
     $(document).ready(
             function ()
             {
+                productArray = {!! json_encode($productstransaction) !!};
                 //add current products to list
-                addToProducts({!! json_encode($productstransaction) !!}
-                );
+                for (var i = 0; i < productArray.length; i++) {
+                    addToProducts(productArray[i].id,
+                                    productArray[i].product_id, 
+                                    productArray[i].product_description,
+                                    productArray[i].product_qty,
+                                    productArray[i].product_cost);
+                }
             }
     );
-    
-    
-    /*
-     * Displays list of products using
-     * a datatables jQuery plugin on table id="example"
-     */
-
-    function addToProducts(productArray) {
-
-        for (var i = 0; i < productArray.length; i++) {
-                
-            $('<div id="productRow" class="row">' +
-                    '<div><input type="hidden" id="detailarray" name="detail_id[]" value=' + productArray[i].id + '></div>' +
-                    '<div><input type="hidden" id="productarray" name="product_id[]" value=' + productArray[i].product_id + '></div>' +
-                    '<div class="col-xs-3 small">  ' + productArray[i].product_description + '  </div>' +
-                    '<div class="col-xs-3"> <input class="form-control input-sm" name="product_qty[]" type="number" min ="0" step="0.01" value="' + productArray[i].product_qty + '"> </div> ' +
-                    '<div class="col-xs-4"> <input class="form-control input-sm" name="product_cost[]" type="number" min ="0" step="0.01" value="' + productArray[i].product_cost + '"> </div> ' +
-                    '<div class="col-xs-2"> <a href="#" id="removedescriptor">' + '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' + '</a></div> ' +
-                    '</div><hr>').appendTo('#products');
-        }
-    }
     
 </script>
 

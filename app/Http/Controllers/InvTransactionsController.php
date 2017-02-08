@@ -62,7 +62,8 @@ class InvTransactionsController extends Controller {
                 ->pluck('short_description', 'id');
         $storages = Storage::orderBy('description', 'asc')
                 ->pluck('description', 'id');
-        return view('invTransactions.create', compact('transaction_types', 'storages'));
+        $fact_id = config('global.fact_id',0);
+        return view('invTransactions.create', compact('transaction_types', 'storages','fact_id'));
     }
 
     /**
@@ -74,30 +75,28 @@ class InvTransactionsController extends Controller {
     public function store(Request $request) {
         $action_code = 'invTransactions_store';
         $message = usercan($action_code, Auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }//a return won't let the following code to continue
+        if ($message) {return redirect()->back()->with('message', $message);}
+        // //a return won't let the following code to continue
         //Receives and updates new purchase data
 
         if (empty($request->get('product_id'))) {
-            return redirect()->route('invTransactions.create')
-                            ->withInput()
+            return redirect()->route('invTransactions.create')->withInput()
                             ->with('message', 'No product was found');
         }
-
         //$this->validate($request, InvTransactionHeader::$rules);
         //$this->validate($request, InvTransactionDetail::$rules);
-
+        $transDetails = $this->getTransDetails($request);
+        if (empty($transDetails)) {return redirect()
+                ->route('invTransactions.create')
+                ->withInput()->with('message', 'No product was found');}
+                
         $transHeadersData = $this->getTransHeaderData($request);
 
         $createdTransHeader = InvTransactionHeader::create($transHeadersData);
-
-        $transDetails = $this->getTransDetails($request);
-
+        
         foreach ($transDetails as $transDetail) {
             $createdTransHeader->invTransactionDetails()->create($transDetail);
         }
-
         return redirect()->route('invTransactions.index')
                         ->with('message', 'Transaction created');
     }
@@ -122,9 +121,7 @@ class InvTransactionsController extends Controller {
         //Redirect to Company editor
         $action_code = 'invTransactions_edit';
         $message = usercan($action_code, Auth::user());
-        if ($message) {
-            return Redirect::back()->with('message', $message);
-        }
+        if ($message) {return Redirect::back()->with('message', $message);}
         // //a return won't let the following code to continue
 
         $invTransactionHeader = InvTransactionHeader::find($id);
@@ -162,16 +159,17 @@ class InvTransactionsController extends Controller {
         $message = usercan('purchases_update', Auth::user());
         if ($message) { return Redirect::back()->with('message', $message); }
         //usercan return won't let the following code to continue
-        $transHeadersData = $this->getTransHeaderData($request);
-        $invHeader = InvTransactionHeader::find($id);
-        $invHeader->update($transHeadersData);
+        
         //$purchaseValidation = Validator::make($incoming_purchase, Purchase::$rules);
         //$detailValidation = Validator::make($purchaseDetails, ProductPurchase::$rules);
         $transDetails = $this->getTransDetails($request);
-        
         if(count($transDetails) === 0) {
             return redirect()->back()->with('message', 'No products found'); 
         }
+        
+        $transHeadersData = $this->getTransHeaderData($request);
+        $invHeader = InvTransactionHeader::find($id);
+        $invHeader->update($transHeadersData);
         
         //delete all records not in the list of records sent
         InvTransactionDetail::where('inv_transaction_header_id','=',$id)
@@ -208,8 +206,8 @@ class InvTransactionsController extends Controller {
     private function getTransHeaderData($request) {
         $transHeadersData = array(
             'transaction_type_id' => $request->get('transaction_type_id'),
-            "storage_id" => $request->get('storage_id'),
-            "document_date" => $request->get('document_date'),
+            'storage_id' => $request->get('storage_id'),
+            'document_date' => $request->get('document_date'),
             'document_number' => $request->get('document_number'),
             'note' => $request->get('note')
         );
@@ -217,17 +215,27 @@ class InvTransactionsController extends Controller {
     }
 
     private function getTransDetails($request) {
-        $transProducts = $request->get('product_id');
-        $product_qty = $request->get('product_qty');
-        $product_cost = $request->get('product_cost');
-        $detail_id = $request->get('detail_id');
+        //get the transaction type
+        $transTypeId =$request->get('transaction_type_id');
+        //check if the effect requires to calculate cost for the transaction 
+        $transSign = TransactionType::find($transTypeId);
+        $needsCost = $transSign->effect_inv === -1;
+         //check if incoming transaction is a bill
+        $isFact = config('global.fact_id',-1) === $transTypeId;
+        $transProducts = $request->get('product_id'); $product_qty = $request->get('product_qty');
+        $product_cost = $request->get('product_cost'); $detail_id = $request->get('detail_id');
         $transDetails = Array();
         for ($nCount = 0; $nCount < count($transProducts); $nCount++) {
+            //use getCost helper function to get cust for current doc
+            $calCost = getCost($transProducts[$nCount], $request->get('document_date'));
+            $cost = ( $needsCost? $calCost : $product_cost[$nCount]);
+            $price = ($isFact? $product_cost[$nCount] : 0);
             $transDetails[] = array(
                 'id' => $detail_id[$nCount],
                 'product_id' => $transProducts[$nCount],
                 'product_qty' => $product_qty[$nCount],
-                'product_cost' => $product_cost[$nCount]
+                'product_cost' => $cost,
+                'product_price'=>$price
             );
         }
         return $transDetails;
@@ -262,4 +270,5 @@ class InvTransactionsController extends Controller {
 
         return $dbRaw;
     }
+   
 }

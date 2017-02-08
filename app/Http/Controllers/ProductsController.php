@@ -85,9 +85,7 @@ class ProductsController extends Controller {
 
         $action_code = 'products_store';
         $message = usercan($action_code, Auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }
+        if ($message) {return redirect()->back()->with('message', $message);}
         //a return won't let the following code to continue
 
         $descriptors = $request->get('descriptor_id');
@@ -270,27 +268,7 @@ class ProductsController extends Controller {
                         ->where('inv_transaction_details.product_id', '=', $id)
                         ->orderBy('document_date', 'asc')->get()->toArray();
 
-        $lastCost = 0;
-        $lastQty = 0;
-        $nCount = 0;
-        $transArray = array();
-        foreach ($transactions as &$transaction) {
-            $transArray[] = [
-                $transaction['short_description'],
-                $transaction['document_number'],
-                $transaction['document_date'],
-                $transaction['note'],
-                $transaction['product_qty'],
-                round($transaction['product_cost'],2),
-                round(($lastCost + $transaction['efe_cost']) / ($lastQty + $transaction['efe_qty']),2),
-                round($lastCost + $transaction['efe_cost'],2),
-                $lastQty + $transaction['efe_qty']
-            ];
-
-            $lastCost = round($lastCost,2) + round($transaction['efe_cost'],2);
-            $lastQty = $lastQty + $transaction['efe_qty'];
-            $nCount += 1;
-        }
+        $transArray = $this->getTransArray($transactions);
 
         return $transArray;
     }
@@ -298,6 +276,7 @@ class ProductsController extends Controller {
     private function getKardexByPage($request, $id) {
         //do a running sum for the data in the report
         //running my a custom paginator in order to handle the running totals
+        // not using it but kept it as an example of a custom paginator
         $perPage = Config::get('global/rows_page', 8);
         $pageStart = $request->get('page', 1);
         //run a limited query for results on one page.
@@ -322,6 +301,31 @@ class ProductsController extends Controller {
         }
 
         return new LengthAwarePaginator($transactions, $nCount, $perPage, Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
+    
+    private function getTransArray($transactions) {
+        $lastCost = 0;
+        $lastQty = 0;
+        $nCount = 0;
+        $transArray = array();
+        foreach ($transactions as $transaction) {
+            $transArray[] = [
+                $transaction['short_description'],
+                $transaction['document_number'],
+                $transaction['document_date'],
+                $transaction['note'],
+                $transaction['product_qty'],
+                round($transaction['product_cost'],2),
+                round(($lastCost + $transaction['efe_cost']) / ($lastQty + $transaction['efe_qty']),2),
+                round($lastCost + $transaction['efe_cost'],2),
+                $lastQty + $transaction['efe_qty']
+            ];
+
+            $lastCost = round($lastCost,2) + round($transaction['efe_cost'],2);
+            $lastQty = $lastQty + $transaction['efe_qty'];
+            $nCount += 1;
+        }
+        return $transArray;
     }
 
 }
