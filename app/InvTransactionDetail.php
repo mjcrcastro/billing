@@ -13,4 +13,8 @@ class InvTransactionDetail extends Model
     public function invTransactionHeader() {
         return $this->belongsTo('App\InvTransactionHeader');
     }
+    
+    public function product() {
+        return $this->hasOne('App\Product');
+    }
 }

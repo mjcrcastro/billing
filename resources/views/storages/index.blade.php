@@ -7,8 +7,13 @@
     active
 @stop
 
-@section('main')
+@section('form_search')
+{{ Form::open(array('method'=>'get','role'=>'search','route'=>'storages.index')) }}
+@include('form_search_file')
+@stop
 
+@section('main')
+<div class="container-fluid">
     <h1> All storages</h1>
 
     <p> {{ link_to_route('storages.create', 'Add new storage') }} </p>
@@ -38,6 +43,7 @@
                 @endforeach
             </tbody>
         </table>
+</div>
         {{ $storages->links() }}  {{-- code at the left is for breadcrumbes --}}
     @else
         There are no storages

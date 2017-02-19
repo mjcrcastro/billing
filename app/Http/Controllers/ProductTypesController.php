@@ -15,16 +15,25 @@ class ProductTypesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //Returns all shops to a view
         $action_code = 'productTypes_index';
         $message = usercan($action_code, Auth::user());
         if ($message) {
             return redirect()->back()->with('message', $message);
+        } 
+        $filter = $request->get('filter');
+        if ($filter) {
+            //this query depends on the definition of 
+            //function productDescriptors in the products model
+            //productDescriptors returns all of this product descriptors
+            $productTypes = ProductType::where('description', 'like', '%' . $filter . '%')
+                    ->paginate(config('global.rows_page'));
         } else {
-            $productTypes = ProductType::paginate(7);
-            return view('producttypes.index', compact('productTypes'));
+            $productTypes = ProductType::paginate(config('global.rows_page'));
+            return view('producttypes.index', compact('productTypes'))
+                     ->with('filter', $filter);
         }
     }
 

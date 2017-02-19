@@ -37,3 +37,4 @@ Route::resource('storages','StoragesController');
 Route::get('jdescriptors', array('uses' => 'JsonController@descriptors'));
 Route::post('jproducts', array('uses' => 'JsonController@products'));
 Route::get('jkardex',array('uses'=>'JsonController@kardex'));
+Route::get('reports/invSaldos',array('uses'=>'ReportsController@invSaldos'));

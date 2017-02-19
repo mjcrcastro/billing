@@ -34,10 +34,7 @@ function actionDescription($action_code) {
 function lastQuery() {
     //returns last executed query
     DB::enableQueryLog();
-    $queries = DB::getQueryLog();
-    DB::disableQueryLog();
-
-    return $queries;
+    return DB::getQueryLog();
 }
 
 function getAllTables() {
@@ -48,7 +45,7 @@ function getAllTables() {
     }
 }
 
-function getCost($product_id, $upToDate) {
+function getCost($product_id, $upToDate, $id) {
     /* Calculates cost for s given product
      * upto an specific date
      */
@@ -60,12 +57,12 @@ function getCost($product_id, $upToDate) {
                     ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
                     ->where('inv_transaction_details.product_id', '=', $product_id)
                     ->where('inv_transaction_headers.document_date', '<=', $upToDate)
-                    ->groupBy('inv_transaction_details.product_id')->get();
-
+                    ->where('inv_transaction_headers.id','<>',$id)
+                    ->groupBy('inv_transaction_details.product_id')->first();
     if (empty($sumInv)) {
         return 0;
     } else {
-        return $sumInv[0]->cost;
+        return $sumInv->cost;
     }
     return $sumInv;
 }

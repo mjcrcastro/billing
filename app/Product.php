@@ -24,13 +24,39 @@ class Product extends Model {
     );
 
     public function productDescriptors() {
-        return $this->hasMany('App\ProductDescriptor')
-                        ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
-                        ->orderBy('descriptors.descriptor_type_id');
+        return $this->hasMany('App\ProductDescriptor');
     }
 
     public function productType() {
         return $this->belongsTo('\App\ProductType', 'product_type_id');
+    }
+
+    public function qtyTotal() {
+        return $this->hasMany('App\InvTransactionDetail')
+                        ->selectRaw('sum(product_qty*transaction_types.effect_inv) AS totalQty')
+                        ->join('inv_transaction_headers', 
+                                'inv_transaction_details.inv_transaction_header_id', 
+                                '=', 'inv_transaction_headers.id')
+                        ->join('transaction_types', 
+                                'inv_transaction_headers.transaction_type_id', 
+                                '=', 'transaction_types.id')
+                        ->groupBy('inv_transaction_details.product_id');
+    }
+
+    public function costTotal() {
+        return $this->hasMany('App\InvTransactionDetail')
+                ->selectRaw('sum(product_cost*transaction_types.effect_inv) AS totalCost')
+                ->join('inv_transaction_headers', 
+                        'inv_transaction_details.inv_transaction_header_id', 
+                        '=', 'inv_transaction_headers.id')
+                -> join('transaction_types', 
+                        'inv_transaction_headers.transaction_type_id', 
+                        '=', 'transaction_types.id')
+                        ->groupBy('inv_transaction_details.product_id');
+    }
+
+    public function totalSales() {
+        return $this->productDetails()->sum('precio');
     }
 
     public static function boot() {

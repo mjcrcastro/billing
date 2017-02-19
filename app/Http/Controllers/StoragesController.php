@@ -15,7 +15,7 @@ class StoragesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //Returns all storages to a view
         $action_code = 'storages_index';
@@ -23,8 +23,19 @@ class StoragesController extends Controller
         if ($message) {
             return Redirect::back()->with('message', $message);
         } 
-            $storages = Storage::paginate(7);
-            return view('storages.index', compact('storages'));
+        $filter = $request->get('filter');
+        if ($filter) {
+            //this query depends on the definition of 
+            //function productDescriptors in the products model
+            //productDescriptors returns all of this product descriptors
+            $storages = Storage::where('description', 'like', '%' . $filter . '%')
+                    ->paginate(config('global.rows_page'));
+        } else {
+            $storages = Storage::paginate(config('global.rows_page'));
+        }
+        
+            return view('storages.index', compact('storages'))
+                     ->with('filter', $filter);
     }
 
     /**

@@ -5,14 +5,8 @@ active
 @stop
 
 @section('form_search')
-
-{{ Form::open(array('class'=>'navbar-form navbar-left','method'=>'get','role'=>'search','route'=>'products.index')) }}
-<div class="form-group">
-    {{ Form::text('filter',$filter,array('class'=>'form-control','placeholder'=>'Search')) }}
-</div>
-{{ Form::submit('Search', array('class'=>'btn btn-default')) }} 
-{{ Form::close() }}
-
+{{ Form::open(array('method'=>'get','role'=>'search','route'=>'products.index')) }}
+@include('form_search_file')
 @stop
 
 @section('main')
@@ -41,7 +35,7 @@ active
                     @endforeach
                 </td>
                 <td> 
-                   {{ $product->productType->description }} 
+                    {{ $product->productType->description }} 
                 </td>
                 <td> 
                     {{ link_to_route('products.show', 'Kardex', array($product->id), array('class'=>'btn btn-link '.Config::get('global/default.button_size'))) }} 

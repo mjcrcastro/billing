@@ -14,4 +14,8 @@ class Descriptor extends Model
         'description',
         'descriptor_type_id'
     ];
+    public static $rules= array(
+        'description' => 'required|unique:descriptors,description,null,{{$id}}'
+    );
+    
 }

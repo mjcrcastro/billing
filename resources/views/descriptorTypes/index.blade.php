@@ -7,10 +7,15 @@
     active
 @stop
 
+@section('form_search')
+{{ Form::open(array('method'=>'get','role'=>'search','route'=>'descriptorTypes.index')) }}
+@include('form_search_file')
+@stop
+
 @section('main')
-
+<div class="container-fluid">
     <h1> All descriptor types </h1>
-
+    
     <p> {{ link_to_route('descriptorTypes.create', 'Add new descriptor type') }} </p>
 
     @if ($descriptor_types->count())
@@ -40,6 +45,7 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
         {{ $descriptor_types->links() }}  {{-- code at the left is for breadcrumbes --}}
     @else
         There are no descriptor types

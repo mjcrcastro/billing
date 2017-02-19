@@ -5,18 +5,12 @@ active
 @stop
 
 @section('form_search')
-{{-- Creates a form search on the menu bar --}}
-{{ Form::open(array('class'=>'navbar-form navbar-left','method'=>'get','role'=>'search','route'=>'invTransactions.index')) }}
-<div class="form-group">
-    {{ Form::text('filter',$filter,array('class'=>'form-control','placeholder'=>'Search')) }}
-</div>
-{{ Form::submit('Search', array('class'=>'btn btn-default')) }} 
-{{ Form::close() }}
-
+{{ Form::open(array('method'=>'get','role'=>'search','route'=>'invTransactions.index')) }}
+@include('form_search_file')
 @stop
 
 @section('main')
-<div class ="container-fluid">
+<div class="container-fluid">
 <h1> All Inventory Transactions </h1>
 
 <p> {{ link_to_route('invTransactions.create', Lang::get('invTransactions.add.new')) }} </p>
@@ -61,9 +55,9 @@ active
         @endforeach
     </tbody>
 </table>
+</div>
 {{ $invTransactionHeaders->appends(array('filter'=>$filter))->links() }}
 @else
     There are no Inventory Transactions
 @endif
 @stop
-</div>

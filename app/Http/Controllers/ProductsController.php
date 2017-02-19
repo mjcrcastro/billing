@@ -10,7 +10,6 @@ use App\DescriptorType;
 use App\ProductDescriptor;
 use App\ProductType;
 use App\InvTransactionHeader;
-use App\InvTransactionDetail;
 use Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,25 +29,25 @@ class ProductsController extends Controller {
         $action_code = 'products_index';
 
         $message = usercan($action_code, auth::user());
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }//a return won't let the following code to continue
+        if ($message) {return redirect()->back()->with('message', $message);}
+        //a return won't let the following code to continue
         $filter = $request->get('filter');
         if ($filter) {
             //this query depends on the definition of 
             //function productDescriptors in the products model
             //productDescriptors returns all of this product descriptors
-            $products = Product::whereHas('productDescriptors', function($q) {
-                        $q->where('description', 'like', '' . '%' . Input::get('filter') . '' . '%');
-                    })->orderBy('id', 'desc')->paginate(config('global/rows_page'));
-            return view('products.index', compact('products'))
-                            ->with('filter', $filter);
+            $products_id = ProductDescriptor::select('product_id')
+                            ->whereHas('descriptor', function($q) use ($filter) {
+                                $q->where('descriptors.description', 'like', '' . '%' . $filter . '' . '%');
+                            })->distinct()->pluck('product_id');
+            $products = Product::whereIn('id', $products_id)->orderBy('id', 'desc')
+                    ->paginate(config('global.rows_page'));
         } else {
             $products = Product::orderBy('id', 'desc')
                     ->paginate(config('global.rows_page'));
-            return view('products.index', compact('products'))
-                            ->with('filter', $filter);
         }
+        return view('products.index', compact('products'))
+                            ->with('filter', $filter);
     }
 
     /**
@@ -127,17 +126,13 @@ class ProductsController extends Controller {
         }
         // //a return won't let the following code to continue
         //calculate the total from the previous page
-
         $product = Product::find($id);
 
         $transactions = $this->getKardex($id);
-        
+
         return view('products.kardex', compact(
-                'product', 
-                'transactions',
-                'beforeCost', 
-                'beforeQty')
-                );
+                        'product', 'transactions', 'beforeCost', 'beforeQty')
+        );
     }
 
     /**
@@ -302,7 +297,7 @@ class ProductsController extends Controller {
 
         return new LengthAwarePaginator($transactions, $nCount, $perPage, Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
     }
-    
+
     private function getTransArray($transactions) {
         $lastCost = 0;
         $lastQty = 0;
@@ -310,22 +305,28 @@ class ProductsController extends Controller {
         $transArray = array();
         foreach ($transactions as $transaction) {
             $transArray[] = [
-                $transaction['short_description'],
-                $transaction['document_number'],
-                $transaction['document_date'],
-                $transaction['note'],
-                $transaction['product_qty'],
-                round($transaction['product_cost'],2),
-                round(($lastCost + $transaction['efe_cost']) / ($lastQty + $transaction['efe_qty']),2),
-                round($lastCost + $transaction['efe_cost'],2),
+                $transaction['short_description'], $transaction['document_number'],
+                $transaction['document_date'], $transaction['note'],
+                $transaction['product_qty'], round($transaction['product_cost'], 2),
+                $this->getAvgCost($lastCost + $transaction['efe_cost'], $lastQty + $transaction['efe_qty']),
+                round($lastCost + $transaction['efe_cost'], 2),
                 $lastQty + $transaction['efe_qty']
             ];
 
-            $lastCost = round($lastCost,2) + round($transaction['efe_cost'],2);
+            $lastCost = round($lastCost, 2) + round($transaction['efe_cost'], 2);
             $lastQty = $lastQty + $transaction['efe_qty'];
             $nCount += 1;
         }
         return $transArray;
+    }
+    
+    function getAvgCost($cost, $qty) {
+        if ($qty == 0) {
+            $avgCost = 0;
+        }else{
+            $avgCost = $cost/$qty;
+        }
+        return $avgCost;
     }
 
 }

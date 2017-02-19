@@ -9,18 +9,12 @@
 
 {{-- this section is to show a form search for descriptors on the master blade--}}
 @section('form_search')
-
-{{ Form::open(array('class'=>'navbar-form navbar-left','method'=>'get','role'=>'search','route'=>'descriptors.index')) }}
-    <div class="form-group">
-        {{ Form::text('filter',$filter,array('class'=>'form-control','placeholder'=>'Search')) }}
-        {{ Form::hidden('descriptorType_id', $descriptor_type_id) }}
-    </div>
-{{ Form::submit('Search', array('class'=>'btn btn-default')) }} 
-{{ Form::close() }}
-
+{{ Form::open(array('method'=>'get','role'=>'search','route'=>'descriptors.index')) }}
+@include('form_search_file')
 @stop
 
 @section('main')
+<div class="container-fluid">
 
     <h1> All descriptors {{ $label }} </h1>
     
@@ -55,5 +49,5 @@
     @else
         There are no descriptors
     @endif
-    
+    </div>
 @stop {{-- End of section main --}}

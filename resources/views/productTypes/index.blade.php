@@ -7,9 +7,15 @@
     active
 @stop
 
-@section('main')
+@section('form_search')
+{{ Form::open(array('method'=>'get','role'=>'search','route'=>'productTypes.index')) }}
+@include('form_search_file')
+@stop
 
-    <h1> All descriptor types </h1>
+@section('main')
+<div class="container-fluid">
+
+    <h1> All product types </h1>
 
     <p> {{ link_to_route('productTypes.create', 'Add new product type') }} </p>
 
@@ -40,6 +46,7 @@
                 @endforeach
             </tbody>
         </table>
+</div>
         {{ $productTypes->links() }}  {{-- code at the left is for breadcrumbes --}}
     @else
         There are no descriptor types

@@ -15,16 +15,26 @@ class DescriptorTypesController extends Controller
      *
      * @return Response
      */
-    public function index() {
+    public function index(Request $request) {
         //Returns all shops to a view
         $action_code = 'descriptorTypes_index';
         $message = usercan($action_code, Auth::user());
         if ($message) {
             return Redirect::back()->with('message', $message);
-        } else {
-            $descriptor_types = DescriptorType::paginate(7);
-            return view('descriptorTypes.index', compact('descriptor_types'));
         }
+        $filter = $request->get('filter');
+        if ($filter) {
+            //this query depends on the definition of 
+            //function productDescriptors in the products model
+            //productDescriptors returns all of this product descriptors
+            $descriptor_types = DescriptorType::where('description', 'like', '%' . $filter . '%')
+                    ->paginate(config('global.rows_page'));
+        } else {
+            $descriptor_types = DescriptorType::paginate(config('global.rows_page'));
+        }
+            
+            return view('descriptorTypes.index', compact('descriptor_types'))
+                     ->with('filter', $filter);
     }
 
     /**

@@ -63,6 +63,9 @@
      * a datatables jQuery plugin on table id="example"
      */
     $(document).ready(function () {
+        //change to price or cost in function of the trans type
+        priceOrCost();
+
         var table = $('#example').DataTable({
             "processing": true,
             "serverSide": true,
@@ -149,11 +152,24 @@
 
 <script type='text/javascript'>
     $("#transaction_type_id").change(function () {
-        $var = $("#transaction_type_id").find(":selected").val();
-        if( $var === "{{ $fact_id }}") {
-            $("b#cost_label").html("Price");
-        }else{
-            $("b#cost_label").html("Cost");
-        };
+        priceOrCost();
+        return false;
     });
+</script>
+
+<script type="text/javascript">
+    //function is called to change the label from cost to price
+    //as a function of the current transaction
+    //for a bill (factura) the label should be set to price
+    //for any other transaction, the label is put to cost
+    function priceOrCost() {
+        $var = $("#transaction_type_id").find(":selected").val();
+        if ($var === "{{ $fact_id }}") {
+            $("b#cost_label").html("Price");
+        } else {
+            $("b#cost_label").html("Cost");
+        }
+        ;
+    }
+
 </script>

@@ -18,4 +18,5 @@ class ProductDescriptor extends Model
     public function descriptor() {
         return $this->belongsTo('App\Descriptor');
     }
+    
 }

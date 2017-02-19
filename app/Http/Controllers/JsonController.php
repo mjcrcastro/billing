@@ -125,7 +125,7 @@ class JsonController extends Controller {
                     ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products.id')
                     ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
                     ->groupBy('products.id')
-                    ->havingRaw($this->getHavingRaw($filter));
+                    ->havingRaw($this->getHavingRaw(trim($filter)));
         } else {
             $products = Product::select('products.id as product_id', DB::raw($dbRaw))
                     ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products.id')
