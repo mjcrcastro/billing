@@ -18,7 +18,10 @@ class ReportsController extends Controller
           return Redirect::back()->with('message', $message);
       }
           $products =  Product::with('costTotal')
-                  ->orderBy('id','desc')->paginate();
+                  ->with('qtyTotal')
+                  ->with('productDescription')
+                  ->orderBy('id','desc')
+                  ->paginate(config('global.rows_page'));
           return view('reports.saldos', compact('products'));
 
   }

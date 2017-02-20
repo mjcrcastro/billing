@@ -22,9 +22,8 @@ active
             <tr>
 
                 <td>
-                    @foreach ($product->productDescriptors as $productdescriptor)
-                    {{ $productdescriptor->descriptor->description.' '}}
-                    @endforeach
+                    {{ $product->productDescription()->first()->description }}
+                    
                 </td>
                 <td> 
                     {{ $product->qtyTotal()->first()->totalQty }} 

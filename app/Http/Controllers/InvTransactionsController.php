@@ -230,13 +230,13 @@ class InvTransactionsController extends Controller {
         $transDetails = Array();
         for ($nCount = 0; $nCount < count($transProducts); $nCount++) {
             //use getCost helper function to get cust for current doc
-            $calCost = getCost($transProducts[$nCount], $request->get('document_date'), $id);
-            $cost = ($needsCost ? $calCost : $product_cost[$nCount]);
+            $avgCost = getCost($transProducts[$nCount], $request->get('document_date'), $id);
+            $cost = ($needsCost ? $avgCost*$product_qty[$nCount] : $product_cost[$nCount]);
             $price = ($isFact ? $product_cost[$nCount] : 0);
 
             $transDetails[] = array(
                 'id' => $detail_id[$nCount],'product_id' => $transProducts[$nCount],
-                'product_qty' => $product_qty[$nCount], 'product_cost' => $cost*$product_qty[$nCount],
+                'product_qty' => $product_qty[$nCount], 'product_cost' => $cost,
                 'product_price' => $price);
             
         }

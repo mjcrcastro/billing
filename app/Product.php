@@ -23,8 +23,13 @@ class Product extends Model {
         'product_type_id' => 'required',
     );
 
-    public function productDescriptors() {
-        return $this->hasMany('App\ProductDescriptor');
+    public function productDescription() {
+        return $this->hasMany('App\ProductDescriptor')
+                ->join('descriptors',
+                        'products_descriptors.descriptor_id',
+                        '=',
+                        'descriptors.id')
+                ->selectRaw("GROUP_CONCAT(DISTINCT descriptors.description ORDER BY descriptor_id SEPARATOR ' ') AS description");
     }
 
     public function productType() {

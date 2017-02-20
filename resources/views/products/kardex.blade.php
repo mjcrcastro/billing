@@ -7,9 +7,7 @@ active
 @section('main')
 <div class="container-fluid">
     <h2>  Kardex :: 
-        @foreach ($product->productDescriptors as $productdescriptor)
-        {{ $productdescriptor->descriptor->description.' '}}
-        @endforeach
+        {{ $product->productDescription()->first()->description }}
     </h2>
     <p> {{ link_to_route('products.index', Lang::get('products.index')) }} </p>
 
