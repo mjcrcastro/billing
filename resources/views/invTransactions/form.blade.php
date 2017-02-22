@@ -18,6 +18,10 @@
     {{ Form::label('note', 'Note', array("class"=>"control-label small")) }}
     {{ Form::text('note', null, array('class'=>'form-control',"id"=>"note")) }}
 </div>
+{{ Html::link('#addProducts', 'Add Items',array('class'=>'btn btn-success form-control small','id'=>'addProducts')) }}
+{{ Form::submit('Submit', array('class'=>'btn btn-primary form-control small')) }}
+{{ link_to_route('invTransactions.index', 'Cancel', [],array('class'=>'btn btn-default form-control small')) }}
+<hr>
 <div class="row">
     <div class="col-xs-5 small">
         <b>Product</b>
@@ -33,10 +37,6 @@
 </div>
 <div id="products">
 </div>
-<br>
-{{ Html::link('#', 'Add Items',array('class'=>'btn btn-success form-control','id'=>'addProducts')) }}
-{{ Form::submit('Submit', array('class'=>'btn btn-primary form-control')) }}
-{{ link_to_route('invTransactions.index', 'Cancel', [],array('class'=>'btn btn-default form-control')) }}
 
 <script type='text/javascript'>
     /*Shows a datepicker widget for
@@ -146,7 +146,7 @@
                 '<div class="col-xs-3"> <input class="form-control input-sm" name="product_qty[]" type="number" min ="0" step="0.01" value="' + product_qty + '"> </div> ' +
                 '<div class="col-xs-3"> <input class="form-control input-sm" name="product_cost[]" type="number" min ="0" step="0.01" value="' + product_cost + '"> </div> ' +
                 '<div class="col-xs-1"> <a href="#" id="removedescriptor">' + '{{ Html::image("img/delete.png", "remove", array( "width" => 16, "height" => 16 )) }} ' + '</a></div>' +
-                '</div>').appendTo('#products');
+                '</div>').prependTo('#products');
     }
 </script>
 

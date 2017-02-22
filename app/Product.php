@@ -29,7 +29,7 @@ class Product extends Model {
                         'products_descriptors.descriptor_id',
                         '=',
                         'descriptors.id')
-                ->selectRaw("GROUP_CONCAT(DISTINCT descriptors.description ORDER BY descriptor_id SEPARATOR ' ') AS description");
+                ->selectRaw("GROUP_CONCAT(DISTINCT descriptors.description ORDER BY descriptors.descriptor_type_id SEPARATOR ' ') AS description");
     }
 
     public function productType() {

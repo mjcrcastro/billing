@@ -34,13 +34,13 @@ class InvTransactionsController extends Controller {
                     ->where('user', '=', Auth::user()->username)
                     ->whereRAW("shops.description like '%" . $filter . "%'")
                     ->orderBy('purchase_date', 'desc')
-                    ->paginate(Config::get('global/default.rows'));
+                    ->paginate(config('global.rows_page'));
 
             return view('invTransactions.index', compact('purchases'))
                             ->with('filter', $filter);
         } else {
             $invTransactionHeaders = InvTransactionHeader::orderBy('document_date', 'desc')
-                    ->paginate(Config::get('global/default.rows'));
+                    ->paginate(config('global.rows_page'));
             return view('invTransactions.index', compact('invTransactionHeaders'))
                             ->with('filter', $filter);
         }

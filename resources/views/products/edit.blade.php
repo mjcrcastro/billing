@@ -12,9 +12,7 @@ active
 
 <h1> Edit 
 
-    @foreach ($product->productDescriptors as $productdescriptor)
-    {{ $productdescriptor->descriptor->description.' '}}
-    @endforeach
+    {{ $product->productDescription()->first()->description }}
 
 </h1>
 
