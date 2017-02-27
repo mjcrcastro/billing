@@ -38,3 +38,5 @@ Route::get('jdescriptors', array('uses' => 'JsonController@descriptors'));
 Route::post('jproducts', array('uses' => 'JsonController@products'));
 Route::get('jkardex',array('uses'=>'JsonController@kardex'));
 Route::get('reports/invSaldos',array('uses'=>'ReportsController@invSaldos'));
+Route::get('reports/toBuyForm',array('as'=>'reports.toBuyFrom','uses'=>'ReportsController@toBuyForm'));
+Route::post('reports/toBuyRpt',array('as'=>'reports.toBuyRpt','uses'=>'ReportsController@toBuyRpt'));

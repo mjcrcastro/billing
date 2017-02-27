@@ -25,4 +25,15 @@ class ReportsController extends Controller
           return view('reports.saldos', compact('products'));
 
   }
+  
+  public function toBuyForm() {
+       return view('reports.toBuyForm');
+  }
+  public function toBuyRpt() {
+      /*Estimates products to be bought based on number of items actually
+       * in storage, the daily average, and the next planned purchase date
+       */
+      
+       return view('reports.toBuyRpt');
+  }
 }

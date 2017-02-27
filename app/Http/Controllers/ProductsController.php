@@ -62,9 +62,8 @@ class ProductsController extends Controller {
 
         $message = usercan($action_code, Auth::user());
 
-        if ($message) {
-            return redirect()->back()->with('message', $message);
-        }//a return won't let the following code to continue
+        if ($message) {return redirect()->back()->with('message', $message);}
+        // //a return won't let the following code to continue
         //to be used to check if the descriptor is already registered
         $descriptors = Descriptor::orderBy('description')->get()->pluck('description', 'id');
 
@@ -266,36 +265,6 @@ class ProductsController extends Controller {
         $transArray = $this->getTransArray($transactions);
 
         return $transArray;
-    }
-
-    private function getKardexByPage($request, $id) {
-        //do a running sum for the data in the report
-        //running my a custom paginator in order to handle the running totals
-        // not using it but kept it as an example of a custom paginator
-        $perPage = Config::get('global/rows_page', 8);
-        $pageStart = $request->get('page', 1);
-        //run a limited query for results on one page.
-        $transactions = InvTransactionHeader::select(
-                                'product_qty', 'product_cost', 'document_date', 'document_number', 'note', 'short_description', DB::raw('product_cost*effect_inv AS efe_cost'), DB::raw('product_qty*effect_inv AS efe_qty'))
-                        ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
-                        ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
-                        ->where('inv_transaction_details.product_id', '=', $id)
-                        ->orderBy('document_date', 'asc')
-                        ->skip($perPage * ($pageStart - 1))->take($perPage)->get();
-
-        $lastCost = 0;
-        $lastQty = 0;
-        $nCount = 0;
-        //add running sum to the transactions
-        foreach ($transactions as &$transaction) {
-            $transaction['runningCost'] = $lastCost + $transaction['efe_cost'];
-            $transaction['runningQty'] = $lastQty + $transaction['efe_qty'];
-            $lastCost = $transaction['runningCost'];
-            $lastQty = $transaction['runningQty'];
-            $nCount += 1;
-        }
-
-        return new LengthAwarePaginator($transactions, $nCount, $perPage, Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
     }
 
     private function getTransArray($transactions) {

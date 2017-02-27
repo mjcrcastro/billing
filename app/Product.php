@@ -59,6 +59,26 @@ class Product extends Model {
                         '=', 'transaction_types.id')
                         ->groupBy('inv_transaction_details.product_id');
     }
+    
+    public function getTotalQtyAttribute () {
+        $totalQty = 0;
+        if (!empty($this->qtyTotal()->first()->totalQty)) {
+            $totalQty = $this->qtyTotal()->first()->totalQty;
+        }else{
+            $totalQty = 0;
+        }
+        return $totalQty;
+    }
+    
+    public function getTotalCostAttribute () {
+        $totalCost = 0;
+        if (!empty($this->costTotal()->first()->totalCost)) {
+            $totalCost = $this->costTotal()->first()->totalCost;
+        }else{
+            $totalCost = 0;
+        }
+        return $totalCost;
+    }
 
     public function totalSales() {
         return $this->productDetails()->sum('precio');

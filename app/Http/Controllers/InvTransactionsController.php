@@ -59,7 +59,7 @@ class InvTransactionsController extends Controller {
             return Redirect::back()->with('message', $message);
         }//a return won't let the following code to continue
         $transaction_types = TransactionType::orderBy('description', 'asc')
-                ->pluck('short_description', 'id');
+                ->pluck('description', 'id');
         $storages = Storage::orderBy('description', 'asc')
                 ->pluck('description', 'id');
         $fact_id = config('global.fact_id', 0);
@@ -134,7 +134,7 @@ class InvTransactionsController extends Controller {
 
         $productstransaction = $this->getProductsTransaction($id);
         $transaction_types = TransactionType::orderBy('description', 'asc')
-                ->pluck('short_description', 'id');
+                ->pluck('description', 'id');
         $storages = Storage::orderBy('description', 'asc')
                 ->pluck('description', 'id');
 
