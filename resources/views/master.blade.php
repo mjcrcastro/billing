@@ -335,6 +335,9 @@
                                     <li>
                                         <a href="/descriptors"><i class="fa fa-table fa-fw"></i> Descriptors</a>
                                     </li>
+                                    <li>
+                                        <a href="/transTypes"><i class="fa fa-table fa-fw"></i> Transaction Types</a>
+                                    </li>
                                 </ul>
                                 <!-- /.nav-second-level -->
                             </li>
