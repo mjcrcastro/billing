@@ -11,7 +11,7 @@
 
 <h1> Edit Transaction Type </h1>
 
-{{ Form::model($storage, array('method'=>'PATCH', 'route'=> array('transTypes.update', $transType->id)))  }}
+{{ Form::model($transType, array('method'=>'PATCH', 'route'=> array('transTypes.update', $transType->id)))  }}
     @include('transTypes.form')
 {{ Form::close() }}
 

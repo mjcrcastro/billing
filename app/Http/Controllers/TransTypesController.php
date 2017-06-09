@@ -63,20 +63,20 @@ class TransTypesController extends Controller
     public function store(Request $request)
     {
         //name of the action code, a corresponding entry in actions table
-        $action_code = 'storages_create';
+        $action_code = 'trans_types_create';
         $message = usercan($action_code, Auth::user());
         if ($message) {
             return redirect()->back()->with('message', $message);
         }
             $input = $request->all();
             
-            $this->validate($request, Storage::$rules);
+            $this->validate($request, TransactionType::$rules);
 
                 //if valid data, create a new shop
-                $storage = Storage::create($input);
+                $transType = TransactionType::create($input);
                 //and return to the index
-                return redirect()->route('storages.index')
-                                ->with('message', 'Storage ' . $storage->description . ' created');
+                return redirect()->route('transTypes.index')
+                                ->with('message', 'TransType ' . $transType->description . ' created');
     }
 
     /**
@@ -105,13 +105,13 @@ class TransTypesController extends Controller
             return redirect()->back()->with('message', $message);
         }
             //Actual code to execute
-            $storage = Storage::find($id); //the the shop by the id
+            $transType = TransactionType::find($id); //the the shop by the id
 
-            if (is_null($storage)) { //if no shop is found
-                return redirect()->route('storages.index'); //go to previous page
+            if (is_null($transType)) { //if no shop is found
+                return redirect()->route('transTypes.index'); //go to previous page
             }
             //otherwise display the shop editor view
-            return view('storages.edit', compact('storage'));
+            return view('transTypes.edit', compact('transType'));
             // End of actual code to execute
     }
 
@@ -136,12 +136,12 @@ class TransTypesController extends Controller
             //make sure the description is unique but 
             //exclude the $id for the current shop
             $this->validate($request, [
-            'description' => 'required|unique:storages,description,null,{{$id}}'
+            'description' => 'required|unique:transaction_types,description,null,{{$id}}'
             ]);
 
-                $storage = Storage::find($id);
-                $storage->update($input);
-                return redirect()->route('storages.index');
+                $transType = TransactionType::find($id);
+                $transType->update($input);
+                return redirect()->route('transTypes.index');
     }
 
     /**
@@ -152,12 +152,12 @@ class TransTypesController extends Controller
      */
     public function destroy($id)
     {
-        $action_code = 'storages_destroy';
+        $action_code = 'trans_types_destroy';
         $message = usercan($action_code, Auth::user());
         if ($message) {
             return redirect()->back()->with('message', $message);
         }
-            Storage::find($id)->delete();
-            return redirect()->route('storages.index');
+        TransactionType::find($id)->delete();
+            return redirect()->route('transTypes.index');
     }
 }

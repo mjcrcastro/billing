@@ -14,22 +14,25 @@
         {{ $errors->first('description', ':message') }} 
     </div>
     @endif
+    
     {{ Form::label('effect_inv', 'Inventory Effect:') }}
-    {{ Form::select('effect_inv', [1, -1], array('class="form-control"')) }}
+    {{ Form::select('effect_inv', array("0"=>"Sin effecto","1"=>"Suma","-1"=>"Resta"), null, array('class="form-control"')) }}
     @if ($errors->has('effect_inv')) 
     <div class="small">
         {{ $errors->first('effect_inv', ':message') }} 
     </div>
     @endif
+    
     {{ Form::label('req_qty', 'Requires Quantity:') }}
-    {{ Form::checkbox('req_qty', null, array('class="form-control"')) }}
-    @if ($errors->has('req_qty')) 
+    {{ Form::checkbox('req_qty', 1, True, array('class="checkbox"')) }}
+    @if ($errors->has('req_qty'))
     <div class="small">
         {{ $errors->first('req_qty', ':message') }} 
     </div>
     @endif
+    
     {{ Form::label('req_val', 'Requires Value:') }}
-    {{ Form::checkbox('req_val', null, array('class="form-control"')) }}
+    {{ Form::checkbox('req_val', 1, True, array('class="checkbox"')) }}
     @if ($errors->has('req_val')) 
     <div class="small">
         {{ $errors->first('req_qty', ':message') }} 
