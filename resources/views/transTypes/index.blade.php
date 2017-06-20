@@ -23,6 +23,7 @@
             <thead>
                 <tr>
                     <th>Description</th>
+                    <th>Efecto en Inventario</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -31,6 +32,8 @@
                 @foreach ($transTypes as $transType)
                 <tr>
                     <td> {{ $transType->description }}  </td>
+                    
+                    <td> {{ $transType->effect_inv }}  </td>
 
                     <td> {{ link_to_route('transTypes.edit', 'Edit', array($transType->id), array('class'=>'btn btn-info '.Config::get('global/default.button_size'))) }}  </td>
                     

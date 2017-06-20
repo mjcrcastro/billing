@@ -28,7 +28,7 @@
         <!-- Custom Fonts -->
         <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-        <link href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
+        <link href="/css/jquery-ui.css" rel="stylesheet" type="text/css">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -36,12 +36,12 @@
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
-        <link media="all" type="text/css" rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+        <link media="all" type="text/css" rel="stylesheet" href="/css/buttons.dataTables.min.css">
 
-        <link media="all" type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+        <link media="all" type="text/css" rel="stylesheet" href="/css/jquery.dataTables.min.css">
 
         <!-- jQuery -->
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="/js/jquery-1.12.4.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
         <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -52,11 +52,11 @@
         <!-- Custom Theme JavaScript -->
         <script src="/dist/js/sb-admin-2.js"></script>
 
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
-        <script src="https://cdn.datatables.net/select/1.2.1/js/dataTables.select.min.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+        <script src="/js/jquery-ui.js"></script>
+        <script src="/js/jquery.dataTables.min.js"></script>
+        <script src="/js/dataTables.buttons.min.js"></script>
+        <script src="/js/dataTables.select.min.js"></script>
+        <script src="/js/buttons.print.min.js"></script>
         <!--  custom scripts -->
         @yield('header') <!-- Header is here to include required functions from the included blade page-->
 
@@ -315,34 +315,34 @@
                                 <!-- /.nav-second-level -->
                             </li>
                             <li>
-                                <a href="/invTransactions"><i class="fa fa-table fa-fw"></i> Inv Transactions</a>
+                                <a href="/invTransactions"><i class="fa fa-table fa-fw"></i> Transacciones de Inventario</a>
                             </li>
                             <li>
-                                <a href="/products"><i class="fa fa-table fa-fw"></i> Products</a>
+                                <a href="/products"><i class="fa fa-table fa-fw"></i> Productos</a>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Configuration <span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Configuracion <span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="/storages"><i class="fa fa-table fa-fw"></i> Storages</a>
+                                        <a href="/storages"><i class="fa fa-table fa-fw"></i> Bodegas</a>
                                     </li>
                                     <li>
-                                        <a href="/productTypes"><i class="fa fa-table fa-fw"></i> Product Types</a>
+                                        <a href="/productTypes"><i class="fa fa-table fa-fw"></i> Tipos de Productos</a>
                                     </li>
                                     <li>
-                                        <a href="/descriptorTypes"><i class="fa fa-table fa-fw"></i> Descriptor Types</a>
+                                        <a href="/descriptorTypes"><i class="fa fa-table fa-fw"></i> Tipos de Descriptores</a>
                                     </li>
                                     <li>
-                                        <a href="/descriptors"><i class="fa fa-table fa-fw"></i> Descriptors</a>
+                                        <a href="/descriptors"><i class="fa fa-table fa-fw"></i> Descriptores</a>
                                     </li>
                                     <li>
-                                        <a href="/transTypes"><i class="fa fa-table fa-fw"></i> Transaction Types</a>
+                                        <a href="/transTypes"><i class="fa fa-table fa-fw"></i> Tipos de Transacciones</a>
                                     </li>
                                 </ul>
                                 <!-- /.nav-second-level -->
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Inventory Reports<span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes de Inventario<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                     <li>
                                         <a href="/reports/invSaldos"><i class="fa fa-files-o fa-fw"></i> Saldo total de Inventario</a>
