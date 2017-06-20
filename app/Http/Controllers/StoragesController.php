@@ -136,7 +136,7 @@ class StoragesController extends Controller
             //make sure the description is unique but 
             //exclude the $id for the current shop
             $this->validate($request, [
-            'description' => 'required|unique:storages,description,null,{{$id}}'
+            'description' => 'required|unique:storages,description,'.$id.'id'
             ]);
 
                 $storage = Storage::find($id);

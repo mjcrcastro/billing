@@ -135,7 +135,7 @@ class ProductTypesController extends Controller
             //make sure the description is unique but 
             //exclude the $id for the current shop
             $this->validate($request, [
-            'description' => 'required|unique:product_types,description,null,{{$id}}'
+            'description' => 'required|unique:product_types,description,'.$id.'id'
             ]);
 
                 $productType = ProductType::find($id);

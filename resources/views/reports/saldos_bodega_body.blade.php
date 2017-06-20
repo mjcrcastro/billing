@@ -1,12 +1,5 @@
-@extends('master')
-
-@section('products_active')
-active
-@stop
-
-@section('main')
 <div class="container-fluid">
-    <h1> Current Balance for all products </h1>
+    <h1> Current Balance for all products in storage {{ $storage->description }} </h1>
     @if ($products->count())
     <table class="table table-striped table-condensed">
         <thead>
@@ -14,7 +7,6 @@ active
                 <th >{{Lang::get('products.description')}}</th>
                 <th style="text-align:right">Quantity</th>
                 <th style="text-align:right">Cost</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -25,21 +17,13 @@ active
                     {{ $product->productDescription()->first()->description }}
                 </td>
                 <td align='right'> 
-                    {{ number_format($product->total_qty, 2, '.', ',') }} 
+                    {{ number_format($product->Qty, 2, '.', ',') }} 
                 </td>
                 <td align='right'> 
-                    {{ number_format($product->total_cost, 2, '.', ',') }} 
-                </td>
-                <td> 
-                    {{ link_to_route('products.show', 'Kardex', array($product->id), array('class'=>'btn btn-link '.Config::get('global/default.button_size'))) }} 
+                    {{ number_format($product->Cost, 2, '.', ',') }} 
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
 </div>
-{{ $products->links() }}
-@else
-There are no products
-@endif
-@stop

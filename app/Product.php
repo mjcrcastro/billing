@@ -22,6 +22,12 @@ class Product extends Model {
     public static $rules = array(
         'product_type_id' => 'required',
     );
+    
+    public function productDescriptors(){
+        return $this->hasMany('App\ProductDescriptor')
+                ->join('descriptors','descriptors.id','=','products_descriptors.descriptor_id')
+                ->orderBy('descriptors.descriptor_type_id');
+    }
 
     public function productDescription() {
         return $this->hasMany('App\ProductDescriptor')
@@ -59,7 +65,7 @@ class Product extends Model {
                         '=', 'transaction_types.id')
                         ->groupBy('inv_transaction_details.product_id');
     }
-    
+        
     public function getTotalQtyAttribute () {
         $totalQty = 0;
         if (!empty($this->qtyTotal()->first()->totalQty)) {

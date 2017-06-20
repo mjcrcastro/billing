@@ -342,10 +342,13 @@
                                 <!-- /.nav-second-level -->
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Reports<span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Inventory Reports<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="/reports/invSaldos"><i class="fa fa-files-o fa-fw"></i> Products Balance</a>
+                                        <a href="/reports/invSaldos"><i class="fa fa-files-o fa-fw"></i> Saldo total de Inventario</a>
+                                    </li>
+                                    <li>
+                                        <a href="/reports/getSelectedReport"><i class="fa fa-files-o fa-fw"></i> Saldo por Bodega</a>
                                     </li>
                                 </ul>
                                 <!-- /.nav-second-level -->
