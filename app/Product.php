@@ -18,9 +18,11 @@ class Product extends Model {
 
     protected $fillable = [
         'product_type_id',
+        'location_id'
     ];
     public static $rules = array(
         'product_type_id' => 'required',
+        'location_id'=>'required',
     );
     
     public function productDescriptors(){
@@ -37,9 +39,13 @@ class Product extends Model {
                         'descriptors.id')
                 ->selectRaw("GROUP_CONCAT(DISTINCT descriptors.description ORDER BY descriptors.descriptor_type_id SEPARATOR ' ') AS description");
     }
-
+    
     public function productType() {
         return $this->belongsTo('\App\ProductType', 'product_type_id');
+    }
+    
+    public function location() {
+        return $this->belongsTo('\App\Location', 'location_id');
     }
 
     public function qtyTotal() {

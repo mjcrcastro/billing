@@ -19,7 +19,8 @@ active
         <thead>
             <tr>
                 <th>{{Lang::get('products.description')}}</th>
-                <th>Product type</th>
+                <th>Tipo de Producto</th>
+                <th>Ubicacion</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -34,6 +35,9 @@ active
                 </td>
                 <td> 
                     {{ $product->productType->description }} 
+                </td>
+                <td> 
+                    {{ $product->location->description }} 
                 </td>
                 <td> 
                     {{ link_to_route('products.show', 'Kardex', array($product->id), array('class'=>'btn btn-link '.Config::get('global/default.button_size'))) }} 

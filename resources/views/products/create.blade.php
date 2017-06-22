@@ -226,7 +226,7 @@ active
         <p>
 
         <p>
-            {{ Form::submit('Submit', array('class'=>'btn  btn-primary col-xs-6')) }}
+            {{ Form::submit('Submit', array('class'=>'btn  btn-primary col-xs-6','onclick'=>"if(!confirm('Are you sure to add this item?')){return false;};")) }}
             {{ link_to_route('products.index', 'Cancel', [],array('class'=>'btn btn-default col-xs-6')) }}
 
     </div>

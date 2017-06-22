@@ -31,6 +31,10 @@ class InvTransactionHeader extends Model
         return $this->belongsTo('\App\TransactionType', 'transaction_type_id');
     }
     
+    public function storage() {
+        return $this->belongsTo('\App\Storage', 'storage_id');
+    }
+    
     public function invTransactionDetails() {
         return $this->hasMany('App\InvTransactionDetail');
     }

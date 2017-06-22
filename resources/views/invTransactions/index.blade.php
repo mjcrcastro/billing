@@ -19,9 +19,10 @@ active
 <table class="table table-striped table-ordered table-condensed">
     <thead>
         <tr>
-            <th>{{Lang::get('invTransactions.store')}}</th>
-            <th>Note</th>
-            <th>Date</th>
+            <th>{{ 'Tipo de Transaccion ' }}</th>
+            <th>Nota</th>
+            <th>Fecha</th>
+            <th>Bodega</th>
             <th></th>
             <th></th>
         </tr>
@@ -40,6 +41,10 @@ active
 
             <td>
                 {{ $invTransactionHeader->document_date }}
+            </td>
+            
+            <td>
+                {{ $invTransactionHeader->storage->description }}
             </td>
 
             <td> 

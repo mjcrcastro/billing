@@ -27,6 +27,14 @@ active
         {{ $errors->first('product_type_id', ':message') }} 
     </div>
     @endif
+    
+    {{ Form::label('location', 'Location:') }}
+    {{ Form::select('location_id', $locations, null, array('class="form-control"')) }}
+    @if ($errors->has('location_id')) 
+    <div class="small">
+        {{ $errors->first('location_id', ':message') }} 
+    </div>
+    @endif
     <p></p>
     <p></p>
     {{ Form::submit('Submit', array('class'=>'btn  btn-primary col-xs-6')) }}

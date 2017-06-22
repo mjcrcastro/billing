@@ -37,6 +37,7 @@ class ReportsController extends Controller
                         ->groupBy('inv_transaction_details.product_id')
               ->selectRaw('products.*, sum(product_qty*transaction_types.effect_inv) AS Qty')
               ->selectRaw('sum(product_cost*transaction_types.effect_inv) AS Cost')
+              ->havingRaw('round(sum(product_qty*transaction_types.effect_inv),2) <> 0')
               ->with('productDescription');
       
       if($full_report === '1') {
@@ -64,7 +65,8 @@ class ReportsController extends Controller
                   ->with('qtyTotal')
                   ->with('productDescription')
                   ->orderBy('id','desc')
-                  ->paginate(config('global.rows_page'));
+                  ->get();
+      
           return view('reports.saldos', compact('products'));
 
   }

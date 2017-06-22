@@ -75,7 +75,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
+                    <a class="navbar-brand" href="index.html">Inventario - CAERC</a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -327,6 +327,9 @@
                                         <a href="/storages"><i class="fa fa-table fa-fw"></i> Bodegas</a>
                                     </li>
                                     <li>
+                                        <a href="/locations"><i class="fa fa-table fa-fw"></i> Ubicaciones</a>
+                                    </li>
+                                    <li>
                                         <a href="/productTypes"><i class="fa fa-table fa-fw"></i> Tipos de Productos</a>
                                     </li>
                                     <li>
@@ -345,7 +348,7 @@
                                 <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes de Inventario<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="/reports/invSaldos"><i class="fa fa-files-o fa-fw"></i> Saldo total de Inventario</a>
+                                        <a href="/reports/invSaldos"><i class="fa fa-files-o fa-fw"></i> Saldo General de Inventario</a>
                                     </li>
                                     <li>
                                         <a href="/reports/getSelectedReport"><i class="fa fa-files-o fa-fw"></i> Saldo por Bodega</a>

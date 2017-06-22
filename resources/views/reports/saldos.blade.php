@@ -6,7 +6,7 @@ active
 
 @section('main')
 <div class="container-fluid">
-    <h1> Current Balance for all products </h1>
+    <h1> Saldo General de Inventario </h1>
     @if ($products->count())
     <table class="table table-striped table-condensed">
         <thead>
@@ -14,7 +14,6 @@ active
                 <th >{{Lang::get('products.description')}}</th>
                 <th style="text-align:right">Quantity</th>
                 <th style="text-align:right">Cost</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -30,15 +29,11 @@ active
                 <td align='right'> 
                     {{ number_format($product->total_cost, 2, '.', ',') }} 
                 </td>
-                <td> 
-                    {{ link_to_route('products.show', 'Kardex', array($product->id), array('class'=>'btn btn-link '.Config::get('global/default.button_size'))) }} 
-                </td>
             </tr>
             @endforeach
         </tbody>
     </table>
 </div>
-{{ $products->links() }}
 @else
 There are no products
 @endif

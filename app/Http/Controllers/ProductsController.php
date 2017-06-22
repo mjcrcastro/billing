@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use App\Location;
 
 class ProductsController extends Controller {
 
@@ -151,12 +152,15 @@ class ProductsController extends Controller {
         $product = Product::find($id);
         $productTypes = ProductType::orderBy('description', 'asc')
                 ->pluck('description', 'id');
+        $locations = Location::orderBy('description', 'asc')
+                ->pluck('description', 'id');
         if (is_null($product)) {
             return redirect()->route('products.index', array('product_type_id' => Input::get('product_type_id'),
                         'filter' => $request->get('filter'))
             );
         }
-        return view('products.edit', compact('product', 'productTypes'), array('product_type_id' => $request->get('product_type_id'),
+        return view('products.edit', compact('product', 'productTypes', 'locations'), 
+                array('product_type_id' => $request->get('product_type_id'),
             'filter' => $request->get('filter')));
         // End of actual code to execute
     }

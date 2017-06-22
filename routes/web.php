@@ -34,6 +34,7 @@ Route::resource('descriptorTypes','DescriptorTypesController');
 Route::resource('productTypes','ProductTypesController');
 Route::resource('invTransactions','InvTransactionsController');
 Route::resource('storages','StoragesController');
+Route::resource('locations','LocationsController');
 Route::resource('transTypes','TransTypesController');
 Route::get('jdescriptors', array('uses' => 'JsonController@descriptors'));
 Route::post('jproducts', array('uses' => 'JsonController@products'));
