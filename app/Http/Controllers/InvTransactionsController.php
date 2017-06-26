@@ -26,26 +26,20 @@ class InvTransactionsController extends Controller {
         if ($message) {
             return redirect()->back()->with('message', $message);
         }
+        $invTransactionHeaders = InvTransactionHeader::orderBy('document_date', 'desc')
+                        ->join('storages', 'inv_transaction_headers.storage_id', '=', 'storages.id')
+                ->join('transaction_types','inv_transaction_headers.transaction_type_id','=','transaction_types.id')
+                        ->select('inv_transaction_headers.id',
+                                'transaction_types.description AS transaction',
+                                'inv_transaction_headers.document_number as number', 
+                                'inv_transaction_headers.note as note', 
+                                'inv_transaction_headers.document_date as date',
+                                'storages.description as storage')->get();
 
-        $filter = $request->get('filter');
-        if ($filter) {
+        //conver results to array
 
-            $invTransactionHeaders = InvTransactionHeader::join('shops', 'purchases.shop_id', '=', 'shops.id')
-                    ->where('user', '=', Auth::user()->username)
-                    ->whereRAW("shops.description like '%" . $filter . "%'")
-                    ->orderBy('purchase_date', 'desc')
-                    ->orderBy('id','desc')
-                    ->paginate(config('global.rows_page'));
-
-            return view('invTransactions.index', compact('purchases'))
-                            ->with('filter', $filter);
-        } else {
-            $invTransactionHeaders = InvTransactionHeader::orderBy('document_date', 'desc')
-                    ->orderBy('id','desc')
-                    ->paginate(config('global.rows_page'));
-            return view('invTransactions.index', compact('invTransactionHeaders'))
-                            ->with('filter', $filter);
-        }
+        $trans_array = $this->getTransArray($invTransactionHeaders);
+        return view('invTransactions.index', compact('trans_array'));
     }
 
     /**
@@ -77,7 +71,9 @@ class InvTransactionsController extends Controller {
     public function store(Request $request) {
         $action_code = 'invTransactions_store';
         $message = usercan($action_code, Auth::user());
-        if ($message) {return redirect()->back()->with('message', $message);}
+        if ($message) {
+            return redirect()->back()->with('message', $message);
+        }
         // //a return won't let the following code to continue
         //Receives and updates new purchase data
         if (empty($request->get('product_id'))) {
@@ -233,14 +229,13 @@ class InvTransactionsController extends Controller {
         for ($nCount = 0; $nCount < count($transProducts); $nCount++) {
             //use getCost helper function to get cust for current doc
             $avgCost = getCost($transProducts[$nCount], $request->get('document_date'), $id);
-            $cost = ($needsCost ? $avgCost*$product_qty[$nCount] : $product_cost[$nCount]);
+            $cost = ($needsCost ? $avgCost * $product_qty[$nCount] : $product_cost[$nCount]);
             $price = ($isFact ? $product_cost[$nCount] : 0);
 
             $transDetails[] = array(
-                'id' => $detail_id[$nCount],'product_id' => $transProducts[$nCount],
+                'id' => $detail_id[$nCount], 'product_id' => $transProducts[$nCount],
                 'product_qty' => $product_qty[$nCount], 'product_cost' => $cost,
                 'product_price' => $price);
-            
         }
         return $transDetails;
     }
@@ -249,7 +244,7 @@ class InvTransactionsController extends Controller {
 
         $invTransactionHeader = InvTransactionHeader::find($transaction_id);
 
-        $product_cost = 0; 
+        $product_cost = 0;
         //if a billing transaction place price in the expected product_cost field
         if (config('global.fact_id', -1) === $invTransactionHeader->transaction_type_id) {
             $product_cost = 'inv_transaction_details.product_price AS product_cost';
@@ -257,15 +252,14 @@ class InvTransactionsController extends Controller {
             $product_cost = 'inv_transaction_details.product_cost';
         }
 
-        $products_transaction = Product::select('inv_transaction_details.id', 'products.id as product_id', DB::raw($this->getDbRaw()), 
-                'inv_transaction_details.product_qty', $product_cost)
+        $products_transaction = Product::select('inv_transaction_details.id', 'products.id as product_id', DB::raw($this->getDbRaw()), 'inv_transaction_details.product_qty', $product_cost)
                 ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products.id')
                 ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
                 ->join('inv_transaction_details', 'products.id', '=', 'inv_transaction_details.product_id')
                 ->where('inv_transaction_details.inv_transaction_header_id', '=', $transaction_id)
                 ->groupBy('products.id')
                 ->groupBy('inv_transaction_details.id')
-                ->orderBy('inv_transaction_details.id','asc')
+                ->orderBy('inv_transaction_details.id', 'asc')
                 ->get();
         return $products_transaction;
     }
@@ -284,6 +278,19 @@ class InvTransactionsController extends Controller {
         }
 
         return $dbRaw;
+    }
+    
+    private function getTransArray($transactions) {
+        $nCount = 0;
+        $transArray = array();
+        foreach ($transactions as $transaction) {
+            $transArray[] = [
+                $transaction['id'],$transaction['transaction'],$transaction['number'],
+                $transaction['date'], $transaction['note'], $transaction['storage'],
+            ];
+            $nCount += 1;
+        }
+        return $transArray;
     }
 
 }

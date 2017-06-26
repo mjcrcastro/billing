@@ -318,7 +318,7 @@
                                 <a href="/invTransactions"><i class="fa fa-table fa-fw"></i> Transacciones de Inventario</a>
                             </li>
                             <li>
-                                <a href="/products"><i class="fa fa-table fa-fw"></i> Productos</a>
+                                <a href="/products"><i class="fa fa-table fa-fw"></i> Maestro de productos</a>
                             </li>
                             <li>
                                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> Configuracion <span class="fa arrow"></span></a>

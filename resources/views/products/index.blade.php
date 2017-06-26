@@ -21,6 +21,7 @@ active
                 <th>{{Lang::get('products.description')}}</th>
                 <th>Tipo de Producto</th>
                 <th>Ubicacion</th>
+                <th>Cantidad</th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -38,6 +39,9 @@ active
                 </td>
                 <td> 
                     {{ $product->location->description }} 
+                </td>
+                <td>
+                    {{ number_format($product->total_qty, 2, '.', ',') }}
                 </td>
                 <td> 
                     {{ link_to_route('products.show', 'Kardex', array($product->id), array('class'=>'btn btn-link '.Config::get('global/default.button_size'))) }} 

@@ -7,7 +7,7 @@ active
 
 @section('main')
 <div class ="container-fluid">
-    <h1> Edit Inv Transaction </h1>
+    <h1> Editar  Transaccion </h1>
     {{ Form::model($invTransactionHeader, array('method'=>'PATCH', 'route'=> array('invTransactions.update', $invTransactionHeader->id),'class'=>'form'))  }}
         @include('invTransactions.form')
     {{ Form::close() }}

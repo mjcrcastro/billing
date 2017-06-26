@@ -18,15 +18,13 @@ class ReportsController extends Controller
   }
  
   public function selectedReport(Request $request){
-      $full_report = $request->get('full_report');
       $storageId = $request->get('storage_id');
       
       $storage = Storage::find($storageId);
       
-      $products_raw = Product::join('inv_transaction_details',
+      $products = Product::join('inv_transaction_details',
                                 'inv_transaction_details.product_id',
-                                '=',
-                                'products.id')
+                                '=','products.id')
                         ->join('inv_transaction_headers', 
                                 'inv_transaction_details.inv_transaction_header_id', 
                                 '=', 'inv_transaction_headers.id')
@@ -38,17 +36,9 @@ class ReportsController extends Controller
               ->selectRaw('products.*, sum(product_qty*transaction_types.effect_inv) AS Qty')
               ->selectRaw('sum(product_cost*transaction_types.effect_inv) AS Cost')
               ->havingRaw('round(sum(product_qty*transaction_types.effect_inv),2) <> 0')
-              ->with('productDescription');
-      
-      if($full_report === '1') {
-          $products = $products_raw->get();
-          $report = 'reports.saldos_bodega_no_paginate';
-      }else{
-           $products = $products_raw->paginate(config('global.rows_page'));
-           $report = 'reports.saldos_bodega_paginate';
-          
-      }
-      return view($report, compact('products','storage','full_report'));
+              ->with('productDescription')
+              ->get();
+      return view('reports.saldos_bodega_no_paginate', compact('products','storage','full_report'));
   }
   
   public function invSaldos() {

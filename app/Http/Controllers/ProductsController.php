@@ -128,10 +128,10 @@ class ProductsController extends Controller {
         //calculate the total from the previous page
         $product = Product::find($id);
 
-        $transactions = $this->getKardex($id);
+        $kardex = $this->getKardex($id);
 
         return view('products.kardex', compact(
-                        'product', 'transactions', 'beforeCost', 'beforeQty')
+                        'product', 'kardex', 'beforeCost', 'beforeQty')
         );
     }
 
@@ -264,7 +264,7 @@ class ProductsController extends Controller {
                         ->join('inv_transaction_details', 'inv_transaction_details.inv_transaction_header_id', '=', 'inv_transaction_headers.id')
                         ->join('transaction_types', 'inv_transaction_headers.transaction_type_id', '=', 'transaction_types.id')
                         ->where('inv_transaction_details.product_id', '=', $id)
-                        ->orderBy('document_date', 'asc')->get()->toArray();
+                        ->orderBy('document_date', 'asc')->get();
 
         $transArray = $this->getTransArray($transactions);
 

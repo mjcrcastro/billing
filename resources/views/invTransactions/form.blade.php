@@ -1,26 +1,26 @@
 <div class="form-group form-group-sm">
-    {{ Form::label('storage_id', 'Storage',array("class"=>"control-label small")) }}
+    {{ Form::label('storage_id', 'Bodega',array("class"=>"control-label small")) }}
     {{ Form::select('storage_id', $storages, null, array('class'=>'form-control')) }}
 </div>    
 <div class="form-group form-group-sm">
-    {{ Form::label('transaction_type_id', 'Type',array("class"=>"control-label small")) }}
+    {{ Form::label('transaction_type_id', 'Tipo de Transaccion',array("class"=>"control-label small")) }}
     {{ Form::select('transaction_type_id', $transaction_types, null, array('class'=>'form-control')) }}
 </div>
 <div class="form-group form-group-sm">
-    {{ Form::label('document_date', 'Date', array("class"=>"control-label small")) }}
+    {{ Form::label('document_date', 'Fecha', array("class"=>"control-label small")) }}
     {{ Form::text('document_date', null, array('class'=>'form-control')) }}
 </div>
 <div class="form-group form-group-sm">
-    {{ Form::label('document_number', 'Number', array("class"=>"control-label small")) }}
+    {{ Form::label('document_number', 'Numero de Transaccion', array("class"=>"control-label small")) }}
     {{ Form::text('document_number', null, array('class'=>'form-control',"id"=>"document_number")) }}
 </div>
 <div class="form-group form-group-sm">
-    {{ Form::label('note', 'Note', array("class"=>"control-label small")) }}
+    {{ Form::label('note', 'Nota', array("class"=>"control-label small")) }}
     {{ Form::text('note', null, array('class'=>'form-control',"id"=>"note")) }}
 </div>
-{{ Html::link('#addProducts', 'Add Items',array('class'=>'btn btn-success form-control small','id'=>'addProducts')) }}
-{{ Form::submit('Submit', array('class'=>'btn btn-primary form-control small')) }}
-{{ link_to_route('invTransactions.index', 'Cancel', [],array('class'=>'btn btn-default form-control small')) }}
+{{ Html::link('#addProducts', 'Buscar Producto',array('class'=>'btn btn-success form-control small','id'=>'addProducts')) }}
+{{ Form::submit('Guardar', array('class'=>'btn btn-primary form-control small')) }}
+{{ link_to_route('invTransactions.index', 'Cancelar', [],array('class'=>'btn btn-default form-control small')) }}
 <hr>
 <div class="row">
     <div class="col-xs-5 small">
@@ -77,14 +77,14 @@
             dom: 'T<"clear">lfrtBip',
             buttons: [
                 {
-                    text: 'add new product',
+                    text: 'Agregar nuevo producto al Maestro de Productos',
                     action: function (e, dt, node, conf) {
                         window.open('{{ route("products.create") }}');
                         return false;
                     }
                 },
                 {
-                    text: 'add to purchase',
+                    text: 'Agregar producto a la Transaccion',
                     action: function (e, dt, node, conf) {
                         var aData = table.rows({selected: true}).data().toArray();
                         var values = $("input[id='productarray']")//gets the value of all elements whose id is productarray

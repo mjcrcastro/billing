@@ -3,7 +3,7 @@
      * Displays list of products using
      * a datatables jQuery plugin on table id="example"
      */
-    var dataSet = {!! json_encode($transactions) !!};
+    var dataSet = {!! json_encode($kardex) !!};
             $(document).ready(function () {
     $('#example').DataTable({
     dom: 'Bfrtip',
@@ -22,7 +22,7 @@
             "ordering": false,
             data: dataSet,
             columns: [
-            {title: "Type"},
+            {title: "none"},
             {title: "Number"},
             {title: "Date"},
             {title: "Note"},

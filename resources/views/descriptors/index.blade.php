@@ -45,7 +45,7 @@
                 @endforeach
             </tbody>
         </table>
-        {{ $descriptors->links() }}  {{-- code at the left is for breadcrumbes --}}
+        {{ $descriptors->appends(array('filter'=>$filter))->links() }}  {{-- code at the left is for breadcrumbes --}}
     @else
         There are no descriptors
     @endif
