@@ -32,23 +32,13 @@ class ProductsController extends Controller {
         $message = usercan($action_code, auth::user());
         if ($message) {return redirect()->back()->with('message', $message);}
         //a return won't let the following code to continue
-        $filter = $request->get('filter');
-        if ($filter) {
-            //this query depends on the definition of 
-            //function productDescriptors in the products model
-            //productDescriptors returns all of this product descriptors
-            $products_id = ProductDescriptor::select('product_id')
-                            ->whereHas('descriptor', function($q) use ($filter) {
-                                $q->where('descriptors.description', 'like', '' . '%' . $filter . '' . '%');
-                            })->distinct()->pluck('product_id');
-            $products = Product::whereIn('id', $products_id)->orderBy('id', 'desc')
-                    ->paginate(config('global.rows_page'));
-        } else {
-            $products = Product::orderBy('id', 'desc')
-                    ->paginate(config('global.rows_page'));
-        }
-        return view('products.index', compact('products'))
-                            ->with('filter', $filter);
+            $products = Product::with(['productDescriptors'],
+                    ['productType'],
+                    ['location'],
+                    ['qtyTotal'])
+                    ->orderBy('id', 'desc')->get();
+            $productsArray = $this->getProductsArray($products);
+        return view('products.index', compact('productsArray'));
     }
 
     /**
@@ -300,6 +290,22 @@ class ProductsController extends Controller {
             $avgCost = $cost/$qty;
         }
         return $avgCost;
+    }
+    
+    private function getProductsArray($products) {
+        $nCount = 0;
+        $transArray = array();
+        foreach ($products as $product) {
+            $transArray[] = [
+                $product->id,
+                $product->productDescription()->first()->description,
+                $product->productType->description,
+                $product->location->description,
+                number_format($product->total_qty, 2, '.', ',')
+            ];
+            $nCount += 1;
+        }
+        return $transArray;
     }
 
 }

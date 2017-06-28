@@ -34,7 +34,9 @@ class InvTransactionsController extends Controller {
                                 'inv_transaction_headers.document_number as number', 
                                 'inv_transaction_headers.note as note', 
                                 'inv_transaction_headers.document_date as date',
-                                'storages.description as storage')->get();
+                                'storages.description as storage')
+                ->orderBy('inv_transaction_headers.document_date','desc')
+                ->orderBy('inv_transaction_headers.document_number','desc')->get();
 
         //conver results to array
 
