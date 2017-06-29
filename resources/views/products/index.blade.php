@@ -1,5 +1,9 @@
 @extends('master')
 
+@section('title')
+<title>Listado de Productos CAERC</title>
+@stop
+
 @section('products_active')
 active
 @stop

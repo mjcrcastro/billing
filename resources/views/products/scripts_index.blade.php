@@ -23,7 +23,7 @@
                     }
             }
             ],
-            "ordering": false,
+            "ordering": true,
             data: dataSet,
             columns: [
             { "visible": false },
@@ -33,12 +33,12 @@
             {title: "Cantidad"},
              /* Kardex */ {
             mRender: function (data, type, row) {
-                return '<a href="/products/'+ row[0] + '" class="btn btn-info ">Kardex</a>'
+                return '<a href="/products/'+ row[0] + '">Kardex</a>'
             }
         },
             /* EDIT */ {
             mRender: function (data, type, row) {
-                return '<a href="/products/'+ row[0] + '/edit" class="btn btn-info ">Editar</a>'
+                return '<a href="/products/'+ row[0] + '/edit" class="btn btn-info">Editar</a>'
             }
         },
         /* DELETE */ {

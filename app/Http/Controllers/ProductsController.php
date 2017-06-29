@@ -256,12 +256,12 @@ class ProductsController extends Controller {
                         ->where('inv_transaction_details.product_id', '=', $id)
                         ->orderBy('document_date', 'asc')->get();
 
-        $transArray = $this->getTransArray($transactions);
+        $transArray = $this->getTransArrayKardex($transactions);
 
         return $transArray;
     }
 
-    private function getTransArray($transactions) {
+    private function getTransArrayKardex($transactions) {
         $lastCost = 0;
         $lastQty = 0;
         $nCount = 0;

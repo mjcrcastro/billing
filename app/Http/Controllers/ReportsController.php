@@ -47,15 +47,23 @@ class ReportsController extends Controller
 
       $message = usercan($action_code, Auth::user());
 
-      if ($message) {
-          return Redirect::back()->with('message', $message);
-      }
+      if ($message) {return Redirect::back()->with('message', $message);}
           
-      $products =  Product::with('costTotal')
-                  ->with('qtyTotal')
-                  ->with('productDescription')
-                  ->orderBy('id','desc')
-                  ->get();
+      $products =  Product::join('inv_transaction_details',
+                                'inv_transaction_details.product_id',
+                                '=','products.id')
+                        ->join('inv_transaction_headers', 
+                                'inv_transaction_details.inv_transaction_header_id', 
+                                '=', 'inv_transaction_headers.id')
+                        ->join('transaction_types', 
+                                'inv_transaction_headers.transaction_type_id', 
+                                '=', 'transaction_types.id')
+                        ->groupBy('inv_transaction_details.product_id')
+              ->selectRaw('products.*, sum(product_qty*transaction_types.effect_inv) AS Qty')
+              ->selectRaw('sum(product_cost*transaction_types.effect_inv) AS Cost')
+              ->havingRaw('round(sum(product_qty*transaction_types.effect_inv),2) <> 0')
+              ->with('productDescription')
+              ->get()->sortByDesc('Qty');
       
           return view('reports.saldos', compact('products'));
 
