@@ -12,14 +12,16 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Product</th>
+                            <th>Producto</th>
+                            <th>Existencia</th>
                         </tr>
                     </thead>
 
                     <tfoot>
                         <tr>
                             <th></th>
-                            <th>Product</th>
+                            <th>Producto</th>
+                            <th>Existencia</th>
                         </tr>
                     </tfoot>
                 </table>

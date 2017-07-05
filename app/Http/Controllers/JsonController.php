@@ -29,10 +29,7 @@ class JsonController extends Controller {
         if ($request->ajax()) {//only return data to ajax calls
             $filter = $request->get('term');
 
-            $descriptors = Descriptor::select('descriptors.id as descriptor_id', 
-                    'descriptors.description as label', 
-                    'descriptor_types.description as category', 
-                    'descriptors.descriptor_type_id')
+            $descriptors = Descriptor::select('descriptors.id as descriptor_id', 'descriptors.description as label', 'descriptor_types.description as category', 'descriptors.descriptor_type_id')
                             ->join('descriptor_types', 'descriptors.descriptor_type_id', '=', 'descriptor_types.id')
                             ->whereRaw("LOWER(descriptors.description) like '%" .
                                     strtolower($filter) . "%'")
@@ -58,25 +55,20 @@ class JsonController extends Controller {
         if ($request->ajax()) {//return json data only to ajax queries
             $filter = Input::get('search.value');
 
-            $dbRaw = $this->getDbRaw();
-
-            $products = $this->getProducts($filter, $dbRaw);
+            $products = $this->getProducts($filter);
 
             $response['draw'] = Input::get('draw');
 
             $response['recordsTotal'] = Product::all()->count();
 
-            $response['recordsFiltered'] = $products->get()->count();
+            $response['recordsFiltered'] = count($products);
 
-            $response['data'] = $products
-                    ->skip(Input::get('start'))
-                    ->take(Input::get('length'))
-                    ->get();
+            $response['data'] = array_slice($products, Input::get('start'), Input::get('length'));
 
             return response()->json($response);
         }
     }
-    
+
     /*
      * Receives a seach string and converts every word into individual
      * words that are used to prepare a havingRaw clause for a search of product
@@ -102,39 +94,31 @@ class JsonController extends Controller {
         return substr($having, 5, strlen($having) - 5);
     }
 
-    private function getDbRaw() {
-        if (Config::get('database.default') === 'mysql') {
-
-            $dbRaw = "GROUP_CONCAT(DISTINCT descriptors.description "
-                    . "ORDER BY descriptors.descriptor_type_id SEPARATOR ' ') "
-                    . "as product_description";
-        } else {
-
-            $dbRaw = "string_agg(descriptors.description, ' ' "
-                    . "ORDER BY descriptors.\"descriptor_type_id\") "
-                    . "as product_description";
-        }
-
-        return $dbRaw;
-    }
-
-    private function getProducts($filter, $dbRaw) {
+    private function getProducts($filter) {
+        
+        $products_array = array();
         if ($filter) {
 
-            $products = Product::select('products.id as product_id', DB::raw($dbRaw))
+            $products = Product::select('products.id')
                     ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products.id')
                     ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
                     ->groupBy('products.id')
-                    ->havingRaw($this->getHavingRaw(trim($filter)));
+                    ->havingRaw($this->getHavingRaw(trim($filter)))
+                    ->distinct()
+                    ->get();
         } else {
-            $products = Product::select('products.id as product_id', DB::raw($dbRaw))
-                    ->join('products_descriptors', 'products_descriptors.product_id', '=', 'products.id')
-                    ->join('descriptors', 'descriptors.id', '=', 'products_descriptors.descriptor_id')
-                    ->groupBy('products.id');
+            $products = Product::get();
         }
-
-        return $products;
+        
+         foreach ($products as $product) {
+                $products_array[] = [
+                'product_id'=>$product->id,
+                'product_description'=>$product->productDescription()->first()->description,
+                'qty'=>number_format($product->total_qty, 2, '.', ',')
+            ];
+         } 
+        
+        return $products_array;
     }
-    
 
 }

@@ -353,6 +353,12 @@
                                     <li>
                                         <a href="/reports/getSelectedReport"><i class="fa fa-files-o fa-fw"></i> Saldo por Bodega</a>
                                     </li>
+                                    <li>
+                                        <a href="/reports/selectTrans"><i class="fa fa-files-o fa-fw"></i> Mov. por transaccion</a>
+                                    </li>
+                                    <li>
+                                        <a href="/reports/toBuyForm"><i class="fa fa-files-o fa-fw"></i> Proyeccion de Compras</a>
+                                    </li>
                                 </ul>
                                 <!-- /.nav-second-level -->
                             </li>

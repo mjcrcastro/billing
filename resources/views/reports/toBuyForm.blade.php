@@ -6,23 +6,27 @@ active
 
 @section('main')
 <div class ="container-fluid">
-<h1> Purchases Projection </h1>
-<small>
-    This projection is based on estimated product products delivery to the shop 
-    <br>
-    (e.g., when the products will be available at the shop's counter)
-</small>
-
+<h1> Proyeccion de compras </h1>
 {{ Form::open(array('route'=>'reports.toBuyRpt','class'=>'vertical','role'=>'form')) }}
 
 <div class="form-group form-group-sm">
-    {{ Form::label('this_purchase_date', 'This Delivery Date', array("class"=>"control-label small")) }}
-    {{ Form::text('this_purchase_date', null, array('class'=>'form-control')) }}
+    {{ Form::label('analysis_start_date', 'Fecha de Inicio de Analisis', array("class"=>"control-label small")) }}
+    {{ Form::text('analysis_start_date', null, array('class'=>'form-control')) }}
 </div>
 
 <div class="form-group form-group-sm">
-    {{ Form::label('next_purchase_date', 'Next Delivery Date', array("class"=>"control-label small")) }}
-    {{ Form::text('next_purchase_date', null, array('class'=>'form-control')) }}
+    {{ Form::label('analysis_end_date', 'Fecha de Fin de Analisis', array("class"=>"control-label small")) }}
+    {{ Form::text('analysis_end_date', null, array('class'=>'form-control')) }}
+</div>
+
+<div class="form-group form-group-sm">
+    {{ Form::label('this_delivery_date', 'Fecha prevista para la entrega de esta compra', array("class"=>"control-label small")) }}
+    {{ Form::text('this_delivery_date', null, array('class'=>'form-control')) }}
+</div>
+
+<div class="form-group form-group-sm">
+    {{ Form::label('next_delivery_date', 'Fecha prevista para entrega de proxima compra', array("class"=>"control-label small")) }}
+    {{ Form::text('next_delivery_date', null, array('class'=>'form-control')) }}
 </div>
 
 {{ Form::submit('Submit', array('class'=>'btn btn-primary form-control small')) }}
@@ -36,7 +40,7 @@ active
      * the purchase_date text input control
      */
     $(function () {
-        $("#this_purchase_date").datepicker({
+        $("#this_delivery_date").datepicker({
             changeMonth: true,
             changeYear: true,
             dateFormat: "yy-mm-dd"
@@ -44,13 +48,29 @@ active
     });
     
     $(function () {
-        $("#next_purchase_date").datepicker({
+        $("#next_delivery_date").datepicker({
             changeMonth: true,
             changeYear: true,
             dateFormat: "yy-mm-dd"
         });
     });
-
+    
+    $(function () {
+        $("#analysis_start_date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "yy-mm-dd"
+        });
+    });
+    
+    $(function () {
+        $("#analysis_end_date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "yy-mm-dd"
+        });
+    });
+    
 
 </script>
 

@@ -293,7 +293,6 @@ class ProductsController extends Controller {
     }
     
     private function getProductsArray($products) {
-        $nCount = 0;
         $transArray = array();
         foreach ($products as $product) {
             $transArray[] = [
@@ -303,7 +302,6 @@ class ProductsController extends Controller {
                 $product->location->description,
                 number_format($product->total_qty, 2, '.', ',')
             ];
-            $nCount += 1;
         }
         return $transArray;
     }
