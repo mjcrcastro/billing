@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\Storage;
 use App\InvTransactionDetail;
+use App\TransactionType;
 
 class ReportsController extends Controller
 {//returns a report with current item and monetary totals
@@ -143,6 +144,45 @@ class ReportsController extends Controller
       
       
       return $productsToBuy;
+  }
+  
+   public function tipTransForm() {
+       //select transaction to report a consolidated movement
+       $transaction_types = TransactionType::orderBy('description', 'asc')
+                ->pluck('description', 'id');
+       return view('reports.tipTransForm',compact('transaction_types'));
+  }
+  
+  public function tipTransRpt(Request $request) {
+      //This report presents 
+      // a consolidated movement of all products reported in a transaction type
+      //in a given date range
+      $analysis_start_date = date_create($request->get('analysis_start_date'));
+      $analysis_end_date = date_create($request->get('analysis_end_date'));
+      
+      $title = 'Analisis de movimientos del '.$analysis_start_date->format('dMY')
+              .' a ' .$analysis_end_date->format('dMY');
+      
+      $transaction_type = TransactionType::find($request->get('transaction_type_id'));
+      
+      $products = Product::join('inv_transaction_details',
+                                'inv_transaction_details.product_id','=','products.id')
+                        ->join('inv_transaction_headers', 
+                                'inv_transaction_details.inv_transaction_header_id', 
+                                '=', 'inv_transaction_headers.id')
+                        ->join('transaction_types', 
+                                'inv_transaction_headers.transaction_type_id', 
+                                '=', 'transaction_types.id')
+              ->where('inv_transaction_headers.transaction_type_id','=',$transaction_type->id)
+              ->whereDate('inv_transaction_headers.document_date','<=',$analysis_end_date)
+              ->whereDate('inv_transaction_headers.document_date','>=',$analysis_start_date)
+              ->groupBy('inv_transaction_details.product_id')
+              ->selectRaw('products.id, abs(sum(product_qty*transaction_types.effect_inv)) AS mov_to_date')
+              ->havingRaw('abs(sum(product_qty*transaction_types.effect_inv)) > 0')
+              ->get()
+              ->sortByDesc('mov_to_date');
+      
+       return view('reports.tipTransRpt',compact('products','transaction_type','title'));
   }
   
 }

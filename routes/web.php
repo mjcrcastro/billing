@@ -44,3 +44,5 @@ Route::get('reports/getSelectedReport',array('as'=>'reports.getSelectedReport','
 Route::get('reports/selected',array('as'=>'reports.selected','uses'=>'ReportsController@selectedBalanceReport'));
 Route::get('reports/toBuyForm',array('as'=>'reports.toBuyFrom','uses'=>'ReportsController@toBuyForm'));
 Route::post('reports/toBuyRpt',array('as'=>'reports.toBuyRpt','uses'=>'ReportsController@toBuyRpt'));
+Route::get('reports/tipTransForm',array('as'=>'reports.tipTransForm','uses'=>'ReportsController@tipTransForm'));
+Route::post('reports/tipTransRpt',array('as'=>'reports.tipTransRpt','uses'=>'ReportsController@tipTransRpt'));
