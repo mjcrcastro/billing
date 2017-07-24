@@ -185,4 +185,8 @@ class ReportsController extends Controller
        return view('reports.tipTransRpt',compact('products','transaction_type','title'));
   }
   
+  public function dashboard() {
+      return view('reports.dashboard',compact('inventory_charts'));
+  }
+  
 }

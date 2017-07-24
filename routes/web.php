@@ -46,6 +46,7 @@ Route::get('reports/toBuyForm',array('as'=>'reports.toBuyFrom','uses'=>'ReportsC
 Route::post('reports/toBuyRpt',array('as'=>'reports.toBuyRpt','uses'=>'ReportsController@toBuyRpt'));
 Route::get('reports/tipTransForm',array('as'=>'reports.tipTransForm','uses'=>'ReportsController@tipTransForm'));
 Route::post('reports/tipTransRpt',array('as'=>'reports.tipTransRpt','uses'=>'ReportsController@tipTransRpt'));
+Route::get('dashboard',array('as'=>'reports.dashboard','uses'=>'ReportsController@dashboard'));
 
 Auth::routes();
 
