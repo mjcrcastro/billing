@@ -33,7 +33,7 @@ active
                     {{ number_format($product->existence_to_date, 2, '.', ',') }} 
                 </td>
                 <td align='right'> 
-                    {{ number_format($product->ave_coms_cycle, 2, '.', ',') }} 
+                    {{ number_format($product->consumption_period, 2, '.', ',') }} 
                 </td>
                 <td align='right'> 
                     {{ number_format($product->daily_coms_ave, 2, '.', ',') }} 

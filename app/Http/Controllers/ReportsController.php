@@ -8,6 +8,7 @@ use App\Product;
 use App\Storage;
 use App\InvTransactionDetail;
 use App\TransactionType;
+use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {//returns a report with current item and monetary totals
@@ -82,7 +83,6 @@ class ReportsController extends Controller
        * in this purchase so when the next purchase is due there will be 
        * a minimum number of products at the store
        */
-      
       $this_delivery_date = date_create($request->get('this_delivery_date'));
       $next_delivery_date = date_create($request->get('next_delivery_date'));
       $analysis_start_date = date_create($request->get('analysis_start_date'));
@@ -115,6 +115,7 @@ class ReportsController extends Controller
       $days_to_delivery = $analysis_end_date->diff($this_delivery_date)->format('%a');
       $days_to_provision = $next_delivery_date->diff($this_delivery_date)->format('%a');
       
+    
       $productsToBuy = Product::join('inv_transaction_details',
                                 'inv_transaction_details.product_id',
                                 '=','products.id')
@@ -124,13 +125,13 @@ class ReportsController extends Controller
                         ->join('transaction_types', 
                                 'inv_transaction_headers.transaction_type_id', 
                                 '=', 'transaction_types.id')
-                        ->whereDate('inv_transaction_headers.document_date','<=',$analysis_end_date)
-              ->whereDate('inv_transaction_headers.document_date','>=',$analysis_start_date)
+              ->whereDate('inv_transaction_headers.document_date','<=',$analysis_end_date)
                         ->groupBy('inv_transaction_details.product_id')
-              ->selectRaw('products.id, sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)) AS cosumption_to_date')
+              ->select('products.id')
+              ->selectRaw("sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0)) AS consumption_period")
               ->selectRaw('sum(product_qty*transaction_types.effect_inv) AS existence_to_date')
               ->selectRaw($days_to_provision.'*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).' AS ave_coms_cycle')
-              ->selectRaw('sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).' AS daily_coms_ave')
+              ->selectRaw("sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis)." AS daily_coms_ave")
               ->selectRaw('sum(product_qty*transaction_types.effect_inv) - sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'
                       .($days_in_analysis).'*'.$days_to_delivery.' AS proyected_existence')
               ->selectRaw($days_to_provision.'*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).' - IF(sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).'*'.$days_to_delivery.') < 0,'.
@@ -141,7 +142,6 @@ class ReportsController extends Controller
                       .($days_in_analysis).'*'.$days_to_delivery.')) > 0')
               ->get()
               ->sortByDesc('proyected_purchase');
-      
       
       return $productsToBuy;
   }
@@ -154,6 +154,7 @@ class ReportsController extends Controller
   }
   
   public function tipTransRpt(Request $request) {
+      
       //This report presents 
       // a consolidated movement of all products reported in a transaction type
       //in a given date range
@@ -181,7 +182,7 @@ class ReportsController extends Controller
               ->havingRaw('abs(sum(product_qty*transaction_types.effect_inv)) > 0')
               ->get()
               ->sortByDesc('mov_to_date');
-      
+   
        return view('reports.tipTransRpt',compact('products','transaction_type','title'));
   }
   
