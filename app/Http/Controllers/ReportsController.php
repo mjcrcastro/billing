@@ -87,35 +87,40 @@ class ReportsController extends Controller
       $next_delivery_date = date_create($request->get('next_delivery_date'));
       $analysis_start_date = date_create($request->get('analysis_start_date'));
       $analysis_end_date = date_create($request->get('analysis_end_date'));
-      $title = 'Analisis de consumo del '
-              .$analysis_start_date->format('dMY')
+      
+      $analysis_range = $analysis_start_date->format('dMY')
               .' a '
-              .$analysis_end_date->format('dMY')
-              .' | Fecha de esta compra: '.$this_delivery_date->format('dMY')
+              .$analysis_end_date->format('dMY');
+      
+      $note = 'Basado en consumo de '.$analysis_range
+              .' ('.($analysis_end_date->diff($analysis_start_date)->format('%a') + 1).' dias)';
+      $title = 'Proyeccion de compras al: '.$this_delivery_date->format('dMY')
               .' | Fecha de proxima compra: '.$next_delivery_date->format('dMY')
-              .' | Dias hasta esta compra: '
-              .$analysis_end_date->diff($this_delivery_date)->format('%a')
-              .' | Dias en el ciclo de compra: '
-              .$next_delivery_date->diff($this_delivery_date)->format('%a');
+              .' | Dias a provisionar hasta proxima compra: '
+              .$this_delivery_date->diff($next_delivery_date)->format('%a')
+              .' ('.$this_delivery_date->format('dMY').' se considera suplido por las existencias actuales)';
+      
       
       $analysis_cut_date = $analysis_end_date->format('dMY');
       $purchase_date = $this_delivery_date->format('dMY');
+      $days_proyected = $this_delivery_date->diff($analysis_end_date)->format('%a');
       
       $products_to_buy = $this->getProductsToBuy($this_delivery_date,
               $next_delivery_date,
               $analysis_start_date,
               $analysis_end_date);
       
-      return view('reports.toBuyRpt', compact('products_to_buy','title','analysis_cut_date','purchase_date'));
+      return view('reports.toBuyRpt', compact('products_to_buy',
+              'days_proyected', 'analysis_range','note','title',
+              'analysis_cut_date','purchase_date'));
   }
   
   private function getProductsToBuy($this_delivery_date ,$next_delivery_date,
-          $analysis_start_date, $analysis_end_date) {
-      $days_in_analysis = $analysis_end_date->diff($analysis_start_date)->format('%a');
-      $days_to_delivery = $analysis_end_date->diff($this_delivery_date)->format('%a');
-      $days_to_provision = $next_delivery_date->diff($this_delivery_date)->format('%a');
+      $analysis_start_date, $analysis_end_date) {
+      $days_in_analysis = $analysis_end_date->diff($analysis_start_date)->format('%a')+1; //need to add since start and end date are included
+      $days_to_delivery = $this_delivery_date->diff($analysis_end_date)->format('%a'); //no need to add since the end_date is not included
+      $days_to_provision = $next_delivery_date->diff($this_delivery_date)->format('%a'); //need to add since provision and delivery datea are included
       
-    
       $productsToBuy = Product::join('inv_transaction_details',
                                 'inv_transaction_details.product_id',
                                 '=','products.id')
@@ -129,17 +134,18 @@ class ReportsController extends Controller
                         ->groupBy('inv_transaction_details.product_id')
               ->select('products.id')
               ->selectRaw("sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0)) AS consumption_period")
-              ->selectRaw('sum(product_qty*transaction_types.effect_inv) AS existence_to_date')
-              ->selectRaw($days_to_provision.'*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).' AS ave_coms_cycle')
               ->selectRaw("sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis)." AS daily_coms_ave")
-              ->selectRaw('sum(product_qty*transaction_types.effect_inv) - sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'
-                      .($days_in_analysis).'*'.$days_to_delivery.' AS proyected_existence')
-              ->selectRaw($days_to_provision.'*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).' - IF(sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).'*'.$days_to_delivery.') < 0,'.
-                      ' 0, sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'
-                      .($days_in_analysis).'*'.$days_to_delivery.')) AS proyected_purchase')
-              ->havingRaw($days_to_provision.'*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).' - IF(sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'.($days_in_analysis).'*'.$days_to_delivery.') < 0,'.
-                      ' 0, sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0))/'
-                      .($days_in_analysis).'*'.$days_to_delivery.')) > 0')
+              ->selectRaw($days_to_delivery."*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis)." AS proyected_consumption")
+              ->selectRaw("sum(product_qty*transaction_types.effect_inv) AS existence_to_date")
+              ->selectRaw("sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis)
+                      ."*".$days_to_delivery.") AS proyected_existence")
+              ->selectRaw("(".$days_to_provision."*sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis).")"
+                      ." - "
+                      ."IF((sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis)
+                      ."*".$days_to_delivery.")) < 0, 0,(sum(product_qty*transaction_types.effect_inv) - (sum(product_qty*if(transaction_types.effect_inv = -1, 1, 0)*if(inv_transaction_headers.document_date >= '".$analysis_start_date->format('Y-m-d')."',1,0))/".($days_in_analysis)
+                      ."*".$days_to_delivery.")) )"
+                      ." AS proyected_purchase")
+              ->havingRaw("proyected_purchase > 0")
               ->get()
               ->sortByDesc('proyected_purchase');
       
