@@ -21,7 +21,7 @@
         <link href="/dist/css/sb-admin-2.css" rel="stylesheet">
 
         <!-- Morris Charts CSS -->
-
+        <link href="/css/morris.css" rel="stylesheet" type="text/css"/>
         <!-- added this only for the footer -->
         <link href="/css/custom.css" rel="stylesheet" type="text/css"/>
 
@@ -57,6 +57,7 @@
         <script src="/js/dataTables.buttons.min.js"></script>
         <script src="/js/dataTables.select.min.js"></script>
         <script src="/js/buttons.print.min.js"></script>
+        <script src="/js/morris.js"></script>
         <!--  custom scripts -->
         @yield('header') <!-- Header is here to include required functions from the included blade page-->
 
@@ -303,18 +304,6 @@
                                 <a href="/dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
-                                    <li>
-                                        <a href="flot.html">Flot Charts</a>
-                                    </li>
-                                    <li>
-                                        <a href="morris.html">Morris.js Charts</a>
-                                    </li>
-                                </ul>
-                                <!-- /.nav-second-level -->
-                            </li>
-                            <li>
                                 <a href="/invTransactions"><i class="fa fa-table fa-fw"></i> Transacciones de Inventario</a>
                             </li>
                             <li>
@@ -384,8 +373,9 @@
                     {{Session::get('message')}}
                 </div>
                 @endif
-
-                @yield('main')
+                <div class ="container-fluid">
+                 @yield('main')
+                </div>
 
                 <div id="footer">
                     Copyright &copy; 2016 by Majcro<br/>

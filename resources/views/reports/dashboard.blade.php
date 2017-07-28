@@ -5,6 +5,13 @@ active
 @stop
 
 @section('main')
+<div>
+<h1>Inventario en deficit Top 10</h1>
+<div id="graph"></div>
+<h1>Inventario en exceso</h1>
+<div id="graph2"></div>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
 <script type='text/javascript'>
     
     /*
@@ -13,19 +20,26 @@ active
  * Why not try some of the options above?
  */
 Morris.Bar({
-  element: 'bar-example',
+  element: 'graph',
   data: [
-    { y: '2006', a: 100, b: 90 },
-    { y: '2007', a: 75,  b: 65 },
-    { y: '2008', a: 50,  b: 40 },
-    { y: '2009', a: 75,  b: 65 },
-    { y: '2010', a: 50,  b: 40 },
-    { y: '2011', a: 75,  b: 65 },
-    { y: '2012', a: 100, b: 90 }
+    { y: '2006', a: 100},
+    { y: '2007', a: 75 },
+    { y: '2008', a: 50},
+    { y: '2009', a: 75},
+    { y: '2010', a: 50},
+    { y: '2011', a: 75},
+    { y: '2012', a: 100},
+    { y: '2006', a: 100},
+    { y: '2007', a: 75 },
+    { y: '2008', a: 50},
+    { y: '2009', a: 75},
+    { y: '2010', a: 50},
+    { y: '2011', a: 75},
+    { y: '2012', a: 100}
   ],
   xkey: 'y',
-  ykeys: ['a', 'b'],
-  labels: ['Series A', 'Series B']
+  ykeys: ['a'],
+  labels: ['Series A']
 });
 
 </script>
