@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Config;
 use App\Product;
+use App\Storage;
+use App\InvTransactionDetail;
 
 class JsonController extends Controller {
     /*
@@ -56,7 +58,7 @@ class JsonController extends Controller {
             $filter = Input::get('search.value');
 
             $products = $this->getProducts($filter);
-
+            
             $response['draw'] = Input::get('draw');
 
             $response['recordsTotal'] = Product::all()->count();
@@ -109,16 +111,40 @@ class JsonController extends Controller {
         } else {
             $products = Product::get();
         }
-        
-         foreach ($products as $product) {
+        $storages = Storage::get();
+        foreach ($products as $product) {
+               $notes = " [";
+                foreach ($storages as $storage) {
+                    $notes = $notes.$storage->description."(".$this->getQtyStorage($product->id, $storage->id).")";
+                }
+                $notes = $notes."]";
                 $products_array[] = [
                 'product_id'=>$product->id,
                 'product_description'=>$product->productDescription()->first()->description,
+                'notes'=>$notes,
                 'qty'=>number_format($product->total_qty, 2, '.', ',')
             ];
          } 
         
         return $products_array;
+    }
+    
+    private function getQtyStorage($product_id, $storage_id) {
+        $product_balance = InvTransactionDetail::selectRaw('sum(product_qty*transaction_types.effect_inv) AS totalQty')
+                        ->join('inv_transaction_headers', 
+                                'inv_transaction_details.inv_transaction_header_id', 
+                                '=', 'inv_transaction_headers.id')
+                        ->join('transaction_types', 
+                                'inv_transaction_headers.transaction_type_id', 
+                                '=', 'transaction_types.id')
+                        ->where('storage_id',"=",$storage_id)
+                        ->where('product_id',"=",$product_id)
+                        ->groupBy('inv_transaction_details.product_id');
+        if (!empty($product_balance->first()->totalQty)) {
+            return $product_balance->first()->totalQty;
+        }else{
+            return 0;
+        }
     }
 
 }

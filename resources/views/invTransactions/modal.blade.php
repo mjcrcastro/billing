@@ -13,6 +13,7 @@
                         <tr>
                             <th></th>
                             <th>Producto</th>
+                            <th>Notas</th>
                             <th>Existencia</th>
                         </tr>
                     </thead>
@@ -21,6 +22,7 @@
                         <tr>
                             <th></th>
                             <th>Producto</th>
+                            <th>Notas</th>
                             <th>Existencia</th>
                         </tr>
                     </tfoot>

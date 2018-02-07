@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('master');
+    return view('reports.dashboard');
 });
 //Router for the assets  in case I have assets outside the public folder
 Route::get('{vendor_name}/{module}/{type}/{file}', [ function ($vendor_name, $module, $type, $file) {

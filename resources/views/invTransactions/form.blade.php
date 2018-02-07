@@ -122,6 +122,7 @@
             "columns": [//tells where (from data) the columns are to be placed
                 {"data": "product_id"},
                 {"data": "product_description"},
+                {"data": "notes"},
                 {"data": "qty"}
 
             ]
