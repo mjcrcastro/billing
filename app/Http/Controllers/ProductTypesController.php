@@ -32,7 +32,7 @@ class ProductTypesController extends Controller
                     ->paginate(config('global.rows_page'));
         } else {
             $productTypes = ProductType::paginate(config('global.rows_page'));
-            return view('producttypes.index', compact('productTypes'))
+            return view('productTypes.index', compact('productTypes'))
                      ->with('filter', $filter);
         }
     }
