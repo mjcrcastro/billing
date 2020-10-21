@@ -121,7 +121,7 @@ class ProductsController extends Controller {
         $kardex = $this->getKardex($id);
 
         return view('products.kardex', compact(
-                        'product', 'kardex', 'beforeCost', 'beforeQty')
+                        'product', 'kardex',)
         );
     }
 
